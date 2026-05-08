@@ -1,0 +1,1459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aixinchips — AI Procurement Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --white: #ffffff;
+  --off-white: #fafaf8;
+  --light: #f4f3ef;
+  --light-2: #eceae4;
+  --border: #dddbd4;
+  --border-2: #e8e6e0;
+  --text: #1a1916;
+  --text-2: #4a4844;
+  --text-3: #8a8880;
+  --accent: #1a3a5c;
+  --accent-light: #eef3f8;
+  --accent-2: #c8a96e;
+  --accent-2-light: #faf6ef;
+  --supplier: #2d5a3d;
+  --supplier-light: #eef5f0;
+  --danger: #c0392b;
+  --danger-light: #fdf0ee;
+  --success: #2d5a3d;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--off-white);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  min-height: 100vh;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* ===== LANDING ===== */
+#landing { display: flex; flex-direction: column; min-height: 100vh; }
+
+.land-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 64px;
+  height: 68px;
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.land-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.5px;
+}
+
+.land-logo span { color: var(--accent); }
+
+.land-nav-links { display: flex; align-items: center; gap: 32px; }
+
+.land-nav-link {
+  font-size: 13px;
+  color: var(--text-2);
+  cursor: pointer;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+.land-nav-link:hover { color: var(--text); }
+
+.land-nav-actions { display: flex; gap: 10px; }
+
+/* Buttons */
+.btn {
+  padding: 10px 22px;
+  border-radius: 6px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--text);
+  border: 1.5px solid var(--border);
+}
+.btn-outline:hover { border-color: var(--text); }
+
+.btn-primary {
+  background: var(--accent);
+  color: #fff;
+}
+.btn-primary:hover { background: #1e4a72; }
+
+.btn-gold {
+  background: var(--accent-2);
+  color: var(--white);
+}
+.btn-gold:hover { background: #b8993e; }
+
+.btn-supplier {
+  background: var(--supplier);
+  color: #fff;
+}
+.btn-supplier:hover { background: #1e4a2a; }
+
+.btn-lg {
+  padding: 14px 32px;
+  font-size: 14px;
+  border-radius: 8px;
+}
+
+.btn-full { width: 100%; justify-content: center; margin-top: 8px; padding: 13px; }
+
+.btn-sm { padding: 7px 14px; font-size: 12px; }
+
+/* Hero */
+.land-hero {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: calc(100vh - 68px);
+}
+
+.hero-left {
+  padding: 80px 64px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-right: 1px solid var(--border);
+}
+
+.hero-eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hero-eyebrow::before {
+  content: '';
+  display: block;
+  width: 24px;
+  height: 1px;
+  background: var(--accent);
+}
+
+.hero-left h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(40px, 5vw, 64px);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -1px;
+  margin-bottom: 24px;
+  color: var(--text);
+}
+
+.hero-left h1 em {
+  font-style: italic;
+  color: var(--accent);
+}
+
+.hero-left p {
+  font-size: 16px;
+  color: var(--text-2);
+  line-height: 1.8;
+  max-width: 480px;
+  margin-bottom: 40px;
+  font-weight: 300;
+}
+
+.hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+
+.hero-right {
+  background: var(--light);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 80px 64px;
+  gap: 16px;
+}
+
+.account-card {
+  width: 100%;
+  max-width: 360px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 28px;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+.account-card:hover { border-color: var(--accent); box-shadow: 0 4px 20px rgba(26,58,92,0.08); }
+
+.account-card-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 12px;
+}
+
+.account-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.account-icon.buyer { background: var(--accent-light); }
+.account-icon.seller { background: var(--supplier-light); }
+
+.account-card h3 { font-size: 16px; font-weight: 600; }
+.account-card p { font-size: 13px; color: var(--text-2); line-height: 1.6; }
+
+.account-card-footer {
+  margin-top: 16px;
+  display: flex;
+  justify-content: flex-end;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent);
+  cursor: pointer;
+}
+
+/* Stats bar */
+.land-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-top: 1px solid var(--border);
+  background: var(--white);
+}
+
+.land-stat {
+  padding: 32px 48px;
+  border-right: 1px solid var(--border);
+}
+.land-stat:last-child { border-right: none; }
+
+.land-stat-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.land-stat-label {
+  font-size: 12px;
+  color: var(--text-3);
+  font-weight: 500;
+}
+
+/* ===== AUTH ===== */
+#auth {
+  display: none;
+  min-height: 100vh;
+  background: var(--light);
+}
+
+.auth-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 100vh;
+}
+
+.auth-left {
+  background: var(--accent);
+  padding: 64px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+}
+
+.auth-left::before {
+  content: '';
+  position: absolute;
+  bottom: -100px;
+  right: -100px;
+  width: 400px;
+  height: 400px;
+  background: rgba(255,255,255,0.03);
+  border-radius: 50%;
+}
+
+.auth-left-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.9);
+}
+
+.auth-left-content h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 36px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.2;
+  margin-bottom: 16px;
+}
+
+.auth-left-content p {
+  font-size: 15px;
+  color: rgba(255,255,255,0.65);
+  line-height: 1.8;
+}
+
+.auth-left.supplier-side { background: var(--supplier); }
+
+.auth-right {
+  padding: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--white);
+}
+
+.auth-form { width: 100%; max-width: 400px; }
+
+.auth-back {
+  font-size: 12px;
+  color: var(--text-3);
+  cursor: pointer;
+  margin-bottom: 40px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'DM Mono', monospace;
+  letter-spacing: 0.5px;
+  transition: color 0.2s;
+}
+.auth-back:hover { color: var(--text); }
+
+.auth-form h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.auth-form p {
+  font-size: 13px;
+  color: var(--text-2);
+  margin-bottom: 32px;
+}
+
+.form-field { margin-bottom: 18px; }
+
+.form-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-2);
+  letter-spacing: 0.3px;
+  margin-bottom: 6px;
+}
+
+.form-input {
+  width: 100%;
+  background: var(--off-white);
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  padding: 11px 14px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  color: var(--text);
+  transition: border-color 0.2s, box-shadow 0.2s;
+  outline: none;
+}
+.form-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(26,58,92,0.06); }
+.form-input.supplier:focus { border-color: var(--supplier); box-shadow: 0 0 0 3px rgba(45,90,61,0.06); }
+
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 16px 0;
+}
+.auth-divider::before, .auth-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+.auth-divider span { font-size: 12px; color: var(--text-3); }
+
+.auth-switch {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 13px;
+  color: var(--text-3);
+}
+.auth-switch a { color: var(--accent); cursor: pointer; font-weight: 600; }
+
+/* ===== PLATFORM SHELL ===== */
+.platform-shell {
+  display: none;
+  min-height: 100vh;
+  flex-direction: column;
+}
+
+.plat-nav {
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.plat-nav-left { display: flex; align-items: center; gap: 28px; }
+
+.plat-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.plat-logo span { color: var(--accent); }
+
+.plat-nav-tabs { display: flex; gap: 4px; }
+
+.plat-tab {
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-2);
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.15s;
+}
+.plat-tab:hover { background: var(--light); color: var(--text); }
+.plat-tab.active { background: var(--accent-light); color: var(--accent); font-weight: 600; }
+.plat-tab.active.supplier { background: var(--supplier-light); color: var(--supplier); }
+
+.plat-nav-right { display: flex; align-items: center; gap: 12px; }
+
+.plat-user {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-2);
+}
+
+.plat-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  font-family: 'DM Mono', monospace;
+}
+.plat-avatar.buyer { background: var(--accent-light); color: var(--accent); border: 1.5px solid rgba(26,58,92,0.2); }
+.plat-avatar.seller { background: var(--supplier-light); color: var(--supplier); border: 1.5px solid rgba(45,90,61,0.2); }
+
+/* Platform pages */
+.plat-body { flex: 1; }
+.plat-page { display: none; padding: 36px 40px; }
+.plat-page.active { display: block; }
+
+.plat-page-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 28px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border-2);
+}
+
+.plat-page-head h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 26px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.plat-page-head p { font-size: 13px; color: var(--text-3); }
+
+/* Stats */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.stat-box {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px 22px;
+}
+
+.stat-box-label { font-size: 11px; color: var(--text-3); font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 8px; }
+.stat-box-val { font-family: 'Playfair Display', serif; font-size: 30px; font-weight: 700; color: var(--text); }
+.stat-box-note { font-size: 11px; color: var(--text-3); margin-top: 4px; }
+.stat-box-val.blue { color: var(--accent); }
+.stat-box-val.green { color: var(--supplier); }
+.stat-box-val.gold { color: var(--accent-2); }
+
+/* Table */
+.data-table-wrap {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.data-table-head {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.data-table-head h3 { font-size: 14px; font-weight: 600; }
+
+table { width: 100%; border-collapse: collapse; }
+th {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-3);
+  font-weight: 600;
+  padding: 11px 20px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  background: var(--off-white);
+}
+td { padding: 13px 20px; border-bottom: 1px solid var(--border-2); font-size: 13px; }
+tr:last-child td { border-bottom: none; }
+tbody tr:hover td { background: var(--off-white); }
+
+/* Tags */
+.tag {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+}
+.tag.green { background: var(--supplier-light); color: var(--supplier); }
+.tag.red { background: var(--danger-light); color: var(--danger); }
+.tag.gold { background: var(--accent-2-light); color: var(--accent-2); }
+.tag.blue { background: var(--accent-light); color: var(--accent); }
+
+/* Chat */
+.chat-wrap {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  height: calc(100vh - 250px);
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-head {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--white);
+}
+
+.chat-head-info h3 { font-size: 14px; font-weight: 600; }
+.chat-head-info p { font-size: 12px; color: var(--text-3); font-family: 'DM Mono', monospace; }
+
+.chat-status {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--supplier);
+  font-weight: 600;
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--supplier);
+  animation: blink 2s infinite;
+}
+.status-dot.blue { background: var(--accent); }
+
+@keyframes blink { 0%,100%{opacity:1}50%{opacity:.3} }
+
+.chat-msgs {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: var(--off-white);
+}
+
+.msg-row { display: flex; flex-direction: column; gap: 3px; }
+.msg-row.right { align-items: flex-end; }
+
+.msg-who { font-size: 11px; color: var(--text-3); font-family: 'DM Mono', monospace; }
+
+.msg-bub {
+  max-width: 72%;
+  padding: 11px 15px;
+  border-radius: 10px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.msg-bub.user {
+  background: var(--accent);
+  color: #fff;
+  border-bottom-right-radius: 2px;
+}
+
+.msg-bub.agent {
+  background: var(--white);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-bottom-left-radius: 2px;
+}
+
+.msg-bub.thinking {
+  background: var(--white);
+  border: 1px solid var(--border);
+  color: var(--text-3);
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dots span {
+  display: inline-block;
+  width: 5px; height: 5px;
+  background: var(--accent);
+  border-radius: 50%;
+  animation: dot-bounce 1.2s infinite;
+}
+.dots span:nth-child(2) { animation-delay: 0.2s; }
+.dots span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes dot-bounce { 0%,80%,100%{transform:scale(0.8)}40%{transform:scale(1.2)} }
+
+.chat-foot {
+  padding: 14px 16px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  gap: 10px;
+  background: var(--white);
+}
+
+.chat-input {
+  flex: 1;
+  background: var(--off-white);
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  color: var(--text);
+  resize: none;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.chat-input:focus { border-color: var(--accent); }
+.chat-input.supp:focus { border-color: var(--supplier); }
+
+.chat-send {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.chat-send:hover { background: #1e4a72; }
+.chat-send.supp { background: var(--supplier); }
+.chat-send.supp:hover { background: #1e4a2a; }
+.chat-send:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* Inventory cards */
+.inv-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.inv-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px;
+  border-left: 3px solid var(--supplier);
+}
+
+.inv-part { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text-3); margin-bottom: 6px; }
+.inv-price { font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.inv-detail { font-size: 12px; color: var(--text-3); margin-top: 2px; }
+.inv-avail { font-size: 11px; font-weight: 600; margin-top: 10px; color: var(--supplier); }
+.inv-avail.low { color: var(--danger); }
+
+/* Form */
+.form-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 28px;
+  margin-bottom: 20px;
+}
+.form-card h3 { font-size: 16px; font-weight: 600; margin-bottom: 20px; }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+.fg { display: flex; flex-direction: column; gap: 5px; }
+.fg-label { font-size: 11px; font-weight: 600; color: var(--text-2); }
+.fg-input {
+  background: var(--off-white);
+  border: 1.5px solid var(--border);
+  border-radius: 6px;
+  padding: 9px 12px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  color: var(--text);
+  outline: none;
+}
+.fg-input:focus { border-color: var(--supplier); }
+
+/* Supplier cards on buyer side */
+.supplier-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.supp-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 24px;
+  transition: all 0.2s;
+}
+.supp-card:hover { border-color: var(--accent); box-shadow: 0 2px 12px rgba(26,58,92,0.06); }
+
+.supp-card-tag { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-3); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 10px; }
+.supp-card h3 { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+.supp-card p { font-size: 12px; color: var(--text-3); }
+.supp-card-footer { margin-top: 16px; display: flex; justify-content: space-between; align-items: center; }
+.supp-online { font-size: 11px; font-weight: 600; color: var(--supplier); display: flex; align-items: center; gap: 5px; }
+
+/* Request cards */
+.req-list { display: flex; flex-direction: column; gap: 10px; }
+.req-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.req-info h4 { font-size: 14px; font-weight: 600; margin-bottom: 3px; }
+.req-info p { font-size: 12px; color: var(--text-3); font-family: 'DM Mono', monospace; }
+
+/* Settings page */
+.settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.settings-card { background: var(--white); border: 1px solid var(--border); border-radius: 10px; padding: 24px; }
+.settings-card h3 { font-size: 15px; font-weight: 600; margin-bottom: 18px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+
+.empty-state { padding: 48px; text-align: center; color: var(--text-3); font-size: 13px; font-family: 'DM Mono', monospace; }
+</style>
+</head>
+<body>
+
+<!-- ===== LANDING ===== -->
+<div id="landing">
+  <nav class="land-nav">
+    <div class="land-logo">Aixin<span>chips</span></div>
+    <div class="land-nav-links">
+      <div class="land-nav-link">Platform</div>
+      <div class="land-nav-link">Solutions</div>
+      <div class="land-nav-link">Pricing</div>
+      <div class="land-nav-link">About</div>
+    </div>
+    <div class="land-nav-actions">
+      <button class="btn btn-outline" onclick="showAuth('customer','login')">Sign In</button>
+      <button class="btn btn-primary" onclick="showAuth('customer','signup')">Get Started</button>
+    </div>
+  </nav>
+
+  <div class="land-hero">
+    <div class="hero-left">
+      <div class="hero-eyebrow">AI-Powered Procurement Platform</div>
+      <h1>Where Buyer Agents Meet <em>Supplier Agents</em></h1>
+      <p>Aixinchips connects procurement teams with verified electronic component suppliers through autonomous AI agents — negotiating prices, checking availability, and processing orders around the clock.</p>
+      <div class="hero-actions">
+        <button class="btn btn-primary btn-lg" onclick="showAuth('customer','signup')">I am a Buyer</button>
+        <button class="btn btn-supplier btn-lg" onclick="showAuth('supplier','signup')">I am a Supplier</button>
+      </div>
+    </div>
+
+    <div class="hero-right">
+      <div class="account-card" onclick="showAuth('customer','signup')">
+        <div class="account-card-header">
+          <div class="account-icon buyer"></div>
+          <div>
+            <h3>Buyer Account</h3>
+          </div>
+        </div>
+        <p>Tell your AI agent what components you need. It contacts supplier agents, compares quotes, and brings back the best options — automatically.</p>
+        <div class="account-card-footer">Get started as a buyer →</div>
+      </div>
+
+      <div class="account-card" onclick="showAuth('supplier','signup')">
+        <div class="account-card-header">
+          <div class="account-icon seller"></div>
+          <div>
+            <h3>Supplier Account</h3>
+          </div>
+        </div>
+        <p>Upload your inventory once. Your AI agent responds to buyer requests 24/7, quotes your prices, and alerts you when orders are confirmed.</p>
+        <div class="account-card-footer" style="color:var(--supplier);">Get started as a supplier →</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="land-stats">
+    <div class="land-stat"><div class="land-stat-num">2m</div><div class="land-stat-label">Average response time</div></div>
+    <div class="land-stat"><div class="land-stat-num">24/7</div><div class="land-stat-label">Agent availability</div></div>
+    <div class="land-stat"><div class="land-stat-num">100%</div><div class="land-stat-label">Local AI, no cloud</div></div>
+    <div class="land-stat"><div class="land-stat-num">$0</div><div class="land-stat-label">Per transaction fee</div></div>
+  </div>
+</div>
+
+<!-- ===== AUTH ===== -->
+<div id="auth">
+  <div class="auth-layout">
+    <div class="auth-left" id="authLeftPanel">
+      <div class="auth-left-logo">Aixinchips</div>
+      <div class="auth-left-content">
+        <h2 id="authLeftTitle">Procurement,<br>Automated.</h2>
+        <p id="authLeftSub">Your AI agent handles supplier negotiations while you focus on what matters.</p>
+      </div>
+    </div>
+    <div class="auth-right">
+      <div class="auth-form">
+        <div class="auth-back" onclick="showLanding()">← Back to home</div>
+        <h2 id="authTitle">Create your account</h2>
+        <p id="authSubtitle">Join the AI procurement network</p>
+
+        <div id="signupOnly">
+          <div class="form-field">
+            <label class="form-label">Company Name</label>
+            <input class="form-input" id="authCompany" type="text" placeholder="Your company name">
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label class="form-label">Email Address</label>
+          <input class="form-input" id="authEmail" type="email" placeholder="you@company.com">
+        </div>
+
+        <div class="form-field">
+          <label class="form-label">Password</label>
+          <input class="form-input" id="authPassword" type="password" placeholder="Create a secure password">
+        </div>
+
+        <button class="btn btn-primary btn-full" id="authBtn" onclick="handleAuth()">Create Account</button>
+
+        <div class="auth-switch" id="authSwitch">
+          Already have an account? <a onclick="toggleMode()">Sign in</a>
+        </div>
+
+        <div class="auth-divider"><span>or try demo</span></div>
+        <button class="btn btn-outline btn-full" id="demoBtn" onclick="demoLogin()" style="margin-top:0;">Sign in with Demo Account</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== BUYER PLATFORM ===== -->
+<div id="buyer-shell" class="platform-shell">
+  <nav class="plat-nav">
+    <div class="plat-nav-left">
+      <div class="plat-logo">Aixin<span>chips</span></div>
+      <div class="plat-nav-tabs">
+        <div class="plat-tab active" onclick="buyerPage('chat')" id="btab-chat">My Agent</div>
+        <div class="plat-tab" onclick="buyerPage('orders')" id="btab-orders">Orders</div>
+        <div class="plat-tab" onclick="buyerPage('suppliers')" id="btab-suppliers">Suppliers</div>
+        <div class="plat-tab" onclick="buyerPage('settings')" id="btab-settings">Settings</div>
+      </div>
+    </div>
+    <div class="plat-nav-right">
+      <div class="plat-user">
+        <div class="plat-avatar buyer" id="buyerAvatar">B</div>
+        <span id="buyerName">Buyer</span>
+      </div>
+      <button class="btn btn-outline btn-sm" onclick="logout()">Sign out</button>
+    </div>
+  </nav>
+
+  <div class="plat-body">
+
+    <!-- Chat -->
+    <div class="plat-page active" id="buyer-chat">
+      <div class="plat-page-head">
+        <div>
+          <h1>Procurement Agent</h1>
+          <p>Your AI agent is connected to the supplier network</p>
+        </div>
+      </div>
+      <div class="chat-wrap">
+        <div class="chat-head">
+          <div class="plat-avatar buyer" id="buyerChatAvatar">B</div>
+          <div class="chat-head-info">
+            <h3 id="buyerAgentName">Your Agent</h3>
+            <p>AI Procurement Agent · Supplier Network Active</p>
+          </div>
+          <div class="chat-status"><div class="status-dot blue"></div>Online</div>
+        </div>
+        <div class="chat-msgs" id="buyerMsgs">
+          <div class="msg-row">
+            <div class="msg-who">Agent</div>
+            <div class="msg-bub agent" id="buyerWelcomeMsg">Good morning. I am your procurement agent. Tell me what electronic components you need and I will contact supplier agents on the platform to get you the best quotes.</div>
+          </div>
+        </div>
+        <div class="chat-foot">
+          <textarea class="chat-input" id="buyerInput" placeholder="e.g. I need 500 ESP32-WROOM-32E chips by end of month..." rows="1"></textarea>
+          <button class="chat-send" id="buyerSendBtn" onclick="buyerSend()">Send</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Orders -->
+    <div class="plat-page" id="buyer-orders">
+      <div class="plat-page-head">
+        <div><h1>My Orders</h1><p>Procurement requests and quotes received</p></div>
+      </div>
+      <div class="data-table-wrap">
+        <div class="data-table-head"><h3>Active Requests</h3></div>
+        <div id="buyerOrdersBody">
+          <div class="empty-state">No orders yet. Use your agent to request quotes.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Suppliers -->
+    <div class="plat-page" id="buyer-suppliers">
+      <div class="plat-page-head">
+        <div><h1>Active Suppliers</h1><p>Verified suppliers with agents on the platform</p></div>
+      </div>
+      <div class="supplier-cards" id="buyerSupplierCards">
+        <div class="empty-state">No suppliers on platform yet.</div>
+      </div>
+    </div>
+
+    <!-- Settings -->
+    <div class="plat-page" id="buyer-settings">
+      <div class="plat-page-head"><div><h1>Account Settings</h1></div></div>
+      <div class="settings-grid">
+        <div class="settings-card">
+          <h3>Profile</h3>
+          <div class="form-field"><label class="form-label">Company Name</label><div id="bsCompany" style="font-size:15px;font-weight:600;"></div></div>
+          <div class="form-field" style="margin-top:14px;"><label class="form-label">Email</label><div id="bsEmail" style="font-size:13px;font-family:'DM Mono',monospace;color:var(--text-2);"></div></div>
+          <div style="margin-top:14px;"><label class="form-label">Account Type</label><div style="font-size:13px;font-weight:600;color:var(--accent);">Buyer Account</div></div>
+        </div>
+        <div class="settings-card">
+          <h3>Agent Preferences</h3>
+          <div class="form-field"><label class="form-label">Auto-approve quotes under</label><input class="form-input" type="text" placeholder="$500" value="$500"></div>
+          <div class="form-field" style="margin-top:12px;"><label class="form-label">Preferred lead time</label><input class="form-input" type="text" placeholder="3-5 days" value="3-5 days"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===== SUPPLIER PLATFORM ===== -->
+<div id="supplier-shell" class="platform-shell">
+  <nav class="plat-nav">
+    <div class="plat-nav-left">
+      <div class="plat-logo">Aixin<span>chips</span></div>
+      <div class="plat-nav-tabs">
+        <div class="plat-tab active supplier" onclick="supplierPage('inventory')" id="stab-inventory">Inventory</div>
+        <div class="plat-tab" onclick="supplierPage('requests')" id="stab-requests">Requests</div>
+        <div class="plat-tab" onclick="supplierPage('agent')" id="stab-agent">Agent Activity</div>
+        <div class="plat-tab" onclick="supplierPage('analytics')" id="stab-analytics">Analytics</div>
+        <div class="plat-tab" onclick="supplierPage('settings')" id="stab-settings">Settings</div>
+      </div>
+    </div>
+    <div class="plat-nav-right">
+      <div class="plat-user">
+        <div class="plat-avatar seller" id="supplierAvatar">S</div>
+        <span id="supplierName">Supplier</span>
+      </div>
+      <button class="btn btn-outline btn-sm" onclick="logout()">Sign out</button>
+    </div>
+  </nav>
+
+  <div class="plat-body">
+
+    <!-- Inventory -->
+    <div class="plat-page active" id="supplier-inventory">
+      <div class="plat-page-head">
+        <div><h1>My Inventory</h1><p>Your agent quotes these prices to buyer agents automatically</p></div>
+        <button class="btn btn-supplier" onclick="supplierPage('add')">+ Add Parts</button>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-box"><div class="stat-box-label">Total Parts</div><div class="stat-box-val blue" id="sTotalParts">0</div></div>
+        <div class="stat-box"><div class="stat-box-label">Total Units</div><div class="stat-box-val green" id="sTotalUnits">0</div></div>
+        <div class="stat-box"><div class="stat-box-label">Requests Today</div><div class="stat-box-val gold" id="sReqToday">0</div></div>
+        <div class="stat-box"><div class="stat-box-label">Agent Status</div><div class="stat-box-val green" style="font-size:16px;margin-top:4px;">Active</div></div>
+      </div>
+      <div class="inv-grid" id="suppInvGrid">
+        <div class="empty-state" style="grid-column:1/-1;">No inventory yet. Add parts to activate your agent.</div>
+      </div>
+    </div>
+
+    <!-- Add Parts -->
+    <div class="plat-page" id="supplier-add">
+      <div class="plat-page-head">
+        <div><h1>Add to Inventory</h1><p>Your agent will quote these prices to buyers</p></div>
+        <button class="btn btn-outline" onclick="supplierPage('inventory')">← Back</button>
+      </div>
+      <div class="form-card">
+        <h3>Part Details</h3>
+        <div class="form-grid">
+          <div class="fg"><div class="fg-label">Part Number</div><input class="fg-input" id="nPart" placeholder="e.g. ESP32-WROOM-32E"></div>
+          <div class="fg"><div class="fg-label">Unit Price (USD)</div><input class="fg-input" id="nPrice" type="number" step="0.01" placeholder="2.80"></div>
+          <div class="fg"><div class="fg-label">Stock Quantity</div><input class="fg-input" id="nStock" type="number" placeholder="1000"></div>
+        </div>
+        <div class="form-grid">
+          <div class="fg"><div class="fg-label">Min. Order Qty</div><input class="fg-input" id="nMOQ" type="number" placeholder="10"></div>
+          <div class="fg"><div class="fg-label">Lead Time</div><input class="fg-input" id="nLead" placeholder="3-5 business days"></div>
+          <div class="fg"><div class="fg-label">Description</div><input class="fg-input" id="nDesc" placeholder="Brief description"></div>
+        </div>
+        <button class="btn btn-supplier" onclick="addPart()">Add to Inventory</button>
+      </div>
+    </div>
+
+    <!-- Requests -->
+    <div class="plat-page" id="supplier-requests">
+      <div class="plat-page-head"><div><h1>Incoming Requests</h1><p>Buyer agents that contacted your agent</p></div></div>
+      <div class="req-list" id="suppReqList"><div class="empty-state">No requests yet.</div></div>
+    </div>
+
+    <!-- Agent Activity -->
+    <div class="plat-page" id="supplier-agent">
+      <div class="plat-page-head"><div><h1>Agent Activity</h1><p>What your supplier agent is doing</p></div></div>
+      <div class="chat-wrap">
+        <div class="chat-head">
+          <div class="plat-avatar seller" id="suppChatAvatar">S</div>
+          <div class="chat-head-info">
+            <h3 id="suppAgentName">Supplier Agent</h3>
+            <p>Listening for buyer requests · Auto-quoting</p>
+          </div>
+          <div class="chat-status"><div class="status-dot"></div>Active</div>
+        </div>
+        <div class="chat-msgs" id="suppActivityLog">
+          <div class="msg-row">
+            <div class="msg-who">System</div>
+            <div class="msg-bub agent">Your supplier agent is active. Add inventory to begin receiving and responding to buyer requests automatically.</div>
+          </div>
+        </div>
+        <div class="chat-foot">
+          <textarea class="chat-input supp" id="suppInput" placeholder="Send instructions to your agent..." rows="1"></textarea>
+          <button class="chat-send supp" onclick="suppChat()">Send</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Analytics -->
+    <div class="plat-page" id="supplier-analytics">
+      <div class="plat-page-head"><div><h1>Analytics</h1><p>Agent performance overview</p></div></div>
+      <div class="stats-grid">
+        <div class="stat-box"><div class="stat-box-label">Total Requests</div><div class="stat-box-val blue" id="anaTot">0</div></div>
+        <div class="stat-box"><div class="stat-box-label">Responded</div><div class="stat-box-val green" id="anaResp">0</div></div>
+        <div class="stat-box"><div class="stat-box-label">Out of Stock</div><div class="stat-box-val" style="color:var(--danger);" id="anaOOS2">0</div></div>
+        <div class="stat-box"><div class="stat-box-label">Est. Revenue</div><div class="stat-box-val gold" id="anaRev">$0</div></div>
+      </div>
+      <div class="data-table-wrap">
+        <div class="data-table-head"><h3>Requests by Component</h3></div>
+        <div id="anaTableBody"><div class="empty-state">No data yet.</div></div>
+      </div>
+    </div>
+
+    <!-- Settings -->
+    <div class="plat-page" id="supplier-settings">
+      <div class="plat-page-head"><div><h1>Account Settings</h1></div></div>
+      <div class="settings-grid">
+        <div class="settings-card">
+          <h3>Company Profile</h3>
+          <div class="form-field"><label class="form-label">Company Name</label><div id="ssCompany" style="font-size:15px;font-weight:600;"></div></div>
+          <div class="form-field" style="margin-top:14px;"><label class="form-label">Email</label><div id="ssEmail" style="font-size:13px;font-family:'DM Mono',monospace;color:var(--text-2);"></div></div>
+          <div style="margin-top:14px;"><label class="form-label">Account Type</label><div style="font-size:13px;font-weight:600;color:var(--supplier);">Supplier Account</div></div>
+        </div>
+        <div class="settings-card">
+          <h3>Agent Settings</h3>
+          <div class="form-field"><label class="form-label">Default Lead Time</label><input class="form-input" type="text" value="3-5 business days"></div>
+          <div class="form-field" style="margin-top:12px;"><label class="form-label">Auto-reply to requests</label>
+            <select class="form-input" style="cursor:pointer;"><option>Always (recommended)</option><option>Only if in stock</option><option>Manual approval</option></select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ===== DATA =====
+let currentUser = null;
+let userType = 'customer';
+let authMode = 'signup';
+
+const db = {
+  users: [
+    { id: 1, type: 'customer', company: 'TechBuild Electronics', email: 'buyer@techbuild.com', password: 'demo123', avatar: 'T' },
+    { id: 2, type: 'supplier', company: 'Nexwah Components', email: 'supplier@nexwah.com', password: 'demo123', avatar: 'N' }
+  ],
+  inventory: {
+    2: [
+      { part: 'ESP32-WROOM-32E', price: 2.80, stock: 2500, moq: 10, lead: '3-5 days', desc: 'Wi-Fi + Bluetooth Module' },
+      { part: 'STM32F103C8T6', price: 2.90, stock: 3000, moq: 50, lead: '3-5 days', desc: 'ARM Cortex-M3 MCU' },
+      { part: 'ATMEGA328P-PU', price: 2.10, stock: 4000, moq: 50, lead: '3-5 days', desc: '8-bit AVR Microcontroller' },
+      { part: 'Raspberry Pi 4B 2GB', price: 50.00, stock: 3, moq: 1, lead: '7-10 days', desc: 'Single Board Computer' },
+      { part: 'DHT22', price: 1.50, stock: 2000, moq: 10, lead: '3-5 days', desc: 'Temperature & Humidity Sensor' }
+    ]
+  },
+  requests: [],
+  orders: []
+};
+
+// ===== NAVIGATION =====
+function showLanding() {
+  hide(['auth','buyer-shell','supplier-shell']);
+  document.getElementById('landing').style.display = 'flex';
+}
+
+function showAuth(type, mode) {
+  userType = type; authMode = mode;
+  document.getElementById('landing').style.display = 'none';
+  document.getElementById('auth').style.display = 'block';
+  const isSupplier = type === 'supplier';
+  const panel = document.getElementById('authLeftPanel');
+  panel.className = 'auth-left' + (isSupplier ? ' supplier-side' : '');
+  document.getElementById('authLeftTitle').textContent = isSupplier ? 'Sell Smarter,\nAutomate.' : 'Procurement,\nAutomated.';
+  document.getElementById('authLeftSub').textContent = isSupplier
+    ? 'Your agent handles buyer inquiries 24/7 from your inventory catalogue.'
+    : 'Your agent negotiates with suppliers while you focus on your business.';
+  const isLogin = mode === 'login';
+  document.getElementById('authTitle').textContent = isLogin ? 'Welcome back' : 'Create your account';
+  document.getElementById('authSubtitle').textContent = isLogin ? 'Sign in to your account' : (isSupplier ? 'Join as a supplier' : 'Join as a buyer');
+  document.getElementById('signupOnly').style.display = isLogin ? 'none' : 'block';
+  document.getElementById('authBtn').textContent = isLogin ? 'Sign In' : 'Create Account';
+  document.getElementById('authBtn').className = 'btn btn-full ' + (isSupplier ? 'btn-supplier' : 'btn-primary');
+  document.getElementById('authSwitch').innerHTML = isLogin
+    ? 'No account? <a onclick="toggleMode()">Sign up</a>'
+    : 'Already have an account? <a onclick="toggleMode()">Sign in</a>';
+  document.getElementById('demoBtn').textContent = isSupplier ? 'Demo: Nexwah Components' : 'Demo: TechBuild Electronics';
+}
+
+function toggleMode() { showAuth(userType, authMode === 'login' ? 'signup' : 'login'); }
+
+function demoLogin() {
+  if (userType === 'customer') loginUser(db.users[0]);
+  else loginUser(db.users[1]);
+}
+
+function handleAuth() {
+  const email = document.getElementById('authEmail').value || 'new@company.com';
+  const pw = document.getElementById('authPassword').value || 'pass';
+  const company = document.getElementById('authCompany') ? document.getElementById('authCompany').value || email.split('@')[0] : '';
+
+  if (authMode === 'login') {
+    const found = db.users.find(u => u.email === email && u.type === userType);
+    loginUser(found || { id: Date.now(), type: userType, company: email.split('@')[1] || 'Company', email, avatar: email[0].toUpperCase() });
+  } else {
+    const u = { id: Date.now(), type: userType, company: company || email.split('@')[0], email, password: pw, avatar: (company || email)[0].toUpperCase() };
+    db.users.push(u);
+    if (userType === 'supplier') db.inventory[u.id] = [];
+    loginUser(u);
+  }
+}
+
+function loginUser(user) {
+  currentUser = user;
+  document.getElementById('auth').style.display = 'none';
+  if (user.type === 'customer') {
+    document.getElementById('buyer-shell').style.display = 'flex';
+    document.getElementById('buyerAvatar').textContent = user.avatar;
+    document.getElementById('buyerName').textContent = user.company;
+    document.getElementById('buyerChatAvatar').textContent = user.avatar;
+    document.getElementById('buyerAgentName').textContent = user.company + ' Procurement Agent';
+    document.getElementById('buyerWelcomeMsg').textContent = 'Good day. I am your procurement agent for ' + user.company + '. Tell me what electronic components you need and I will contact supplier agents on the platform to find you the best available pricing.';
+    document.getElementById('bsCompany').textContent = user.company;
+    document.getElementById('bsEmail').textContent = user.email;
+    loadBuyerSuppliers();
+  } else {
+    document.getElementById('supplier-shell').style.display = 'flex';
+    document.getElementById('supplierAvatar').textContent = user.avatar;
+    document.getElementById('supplierName').textContent = user.company;
+    document.getElementById('suppChatAvatar').textContent = user.avatar;
+    document.getElementById('suppAgentName').textContent = user.company + ' Supplier Agent';
+    document.getElementById('ssCompany').textContent = user.company;
+    document.getElementById('ssEmail').textContent = user.email;
+    renderInv();
+  }
+}
+
+function logout() {
+  currentUser = null;
+  hide(['buyer-shell','supplier-shell']);
+  showLanding();
+}
+
+function hide(ids) { ids.forEach(id => { const el = document.getElementById(id); if(el) el.style.display = 'none'; }); }
+
+// ===== BUYER PAGES =====
+function buyerPage(p) {
+  document.querySelectorAll('#buyer-shell .plat-page').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('#buyer-shell .plat-tab').forEach(el => el.classList.remove('active'));
+  document.getElementById('buyer-' + p).classList.add('active');
+  const tab = document.getElementById('btab-' + p);
+  if (tab) tab.classList.add('active');
+  if (p === 'suppliers') loadBuyerSuppliers();
+  if (p === 'orders') renderBuyerOrders();
+}
+
+function buyerSend() {
+  const input = document.getElementById('buyerInput');
+  const msg = input.value.trim();
+  if (!msg) return;
+  input.value = '';
+  addBuyerMsg(msg, 'user');
+  document.getElementById('buyerSendBtn').disabled = true;
+
+  const tid = 'think-' + Date.now();
+  const msgs = document.getElementById('buyerMsgs');
+  msgs.innerHTML += `<div class="msg-row" id="${tid}"><div class="msg-who">Agent</div><div class="msg-bub thinking">Contacting supplier agents <span class="dots"><span></span><span></span><span></span></span></div></div>`;
+  msgs.scrollTop = msgs.scrollHeight;
+
+  setTimeout(() => {
+    document.getElementById(tid).remove();
+    const reply = genBuyerReply(msg);
+    addBuyerMsg(reply, 'agent');
+    document.getElementById('buyerSendBtn').disabled = false;
+    if (msg.toLowerCase().match(/need|want|order|looking for|require/)) {
+      db.orders.push({ id: Date.now(), request: msg, reply, time: new Date().toLocaleString(), status: 'Quote Received' });
+    }
+  }, 2800);
+}
+
+function genBuyerReply(msg) {
+  const lower = msg.toLowerCase();
+  const allInv = [];
+  db.users.filter(u => u.type === 'supplier').forEach(s => {
+    (db.inventory[s.id] || []).forEach(i => allInv.push({ ...i, supplier: s.company, sid: s.id }));
+  });
+
+  const match = allInv.find(i =>
+    lower.includes(i.part.toLowerCase()) ||
+    (lower.includes('esp32') && i.part.toLowerCase().includes('esp32')) ||
+    (lower.includes('stm32') && i.part.toLowerCase().includes('stm32')) ||
+    (lower.includes('raspberry') && i.part.toLowerCase().includes('raspberry')) ||
+    (lower.includes('dht') && i.part.toLowerCase().includes('dht')) ||
+    (lower.includes('atmega') && i.part.toLowerCase().includes('atmega'))
+  );
+
+  const qm = msg.match(/(\d+)/);
+  const qty = qm ? parseInt(qm[1]) : 100;
+
+  if (match) {
+    const total = (match.price * qty).toFixed(2);
+    db.requests.push({ id: Date.now(), customer: currentUser.company, part: match.part, qty, sid: match.sid, status: 'replied', time: new Date().toLocaleTimeString() });
+    updateSuppBadge();
+    if (match.stock >= qty) {
+      return `I have received a quote from ${match.supplier}.\n\nPart: ${match.part}\nUnit Price: $${match.price}\nQuantity: ${qty} units\nTotal: $${total}\nAvailable Stock: ${match.stock.toLocaleString()} units\nLead Time: ${match.lead}\n\nShall I confirm this order?`;
+    } else {
+      return `I contacted ${match.supplier}'s agent. They have ${match.stock} units of ${match.part} in stock — below your requested ${qty}.\n\nPartial order of ${match.stock} units available at $${(match.price * match.stock).toFixed(2)} total.\nThey expect restocking within 2-3 weeks.\n\nWould you like to proceed with the partial order or wait for full stock?`;
+    }
+  }
+
+  if (lower.match(/hi|hello|good/)) return `Good day. I am ready to source components for you. You can ask for parts by name, for example: "I need 500 ESP32-WROOM-32E chips" or "Quote for 200 STM32F103C8T6". I will check all active suppliers immediately.`;
+
+  if (allInv.length > 0) return `I searched the platform but could not find an exact match for your request. Currently available from our supplier network: ${allInv.slice(0,4).map(i=>i.part).join(', ')}. Would you like quotes for any of these?`;
+
+  return `I am searching the supplier network for your request. No suppliers are currently active on the platform. Once suppliers join and add inventory, I can retrieve instant quotes for you.`;
+}
+
+function addBuyerMsg(text, role) {
+  const msgs = document.getElementById('buyerMsgs');
+  const who = role === 'user' ? currentUser.company : 'Agent';
+  const cls = role === 'user' ? 'right' : '';
+  msgs.innerHTML += `<div class="msg-row ${cls}"><div class="msg-who">${who}</div><div class="msg-bub ${role}">${text.replace(/\n/g,'<br>')}</div></div>`;
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function renderBuyerOrders() {
+  const body = document.getElementById('buyerOrdersBody');
+  if (!db.orders.length) { body.innerHTML = '<div class="empty-state">No orders yet.</div>'; return; }
+  body.innerHTML = `<table><thead><tr><th>Request</th><th>Time</th><th>Status</th></tr></thead><tbody>` +
+    db.orders.map(o => `<tr><td style="font-weight:500;max-width:400px;">${o.request}</td><td style="font-family:'DM Mono',monospace;color:var(--text-3);font-size:12px;">${o.time}</td><td><span class="tag green">${o.status}</span></td></tr>`).join('') +
+    `</tbody></table>`;
+}
+
+function loadBuyerSuppliers() {
+  const suppliers = db.users.filter(u => u.type === 'supplier');
+  const el = document.getElementById('buyerSupplierCards');
+  if (!suppliers.length) { el.innerHTML = '<div class="empty-state">No suppliers on platform yet.</div>'; return; }
+  el.innerHTML = suppliers.map(s => {
+    const inv = db.inventory[s.id] || [];
+    return `<div class="supp-card"><div class="supp-card-tag">Verified Supplier</div><h3>${s.company}</h3><p>${inv.length} components available · Agent active 24/7</p><div class="supp-card-footer"><div class="supp-online"><div class="status-dot" style="width:5px;height:5px;"></div>Online</div><span class="tag green">${inv.length} parts</span></div></div>`;
+  }).join('');
+}
+
+// ===== SUPPLIER PAGES =====
+function supplierPage(p) {
+  document.querySelectorAll('#supplier-shell .plat-page').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('#supplier-shell .plat-tab').forEach(el => { el.classList.remove('active'); });
+  document.getElementById('supplier-' + p).classList.add('active');
+  const tab = document.getElementById('stab-' + p);
+  if (tab) { tab.classList.add('active', 'supplier'); }
+  if (p === 'inventory') renderInv();
+  if (p === 'requests') renderReq();
+  if (p === 'analytics') renderAna();
+}
+
+function addPart() {
+  const part = document.getElementById('nPart').value.trim();
+  const price = parseFloat(document.getElementById('nPrice').value);
+  const stock = parseInt(document.getElementById('nStock').value);
+  const moq = parseInt(document.getElementById('nMOQ').value) || 1;
+  const lead = document.getElementById('nLead').value || '3-5 days';
+  const desc = document.getElementById('nDesc').value || '';
+  if (!part || !price || !stock) { alert('Please fill in Part, Price and Stock.'); return; }
+  if (!db.inventory[currentUser.id]) db.inventory[currentUser.id] = [];
+  db.inventory[currentUser.id].push({ part, price, stock, moq, lead, desc });
+  ['nPart','nPrice','nStock','nMOQ','nLead','nDesc'].forEach(id => document.getElementById(id).value = '');
+  addSuppLog('Inventory Updated', `Added ${part} at $${price}/unit — ${stock} units in stock`);
+  supplierPage('inventory');
+}
+
+function renderInv() {
+  const inv = db.inventory[currentUser.id] || [];
+  document.getElementById('sTotalParts').textContent = inv.length;
+  document.getElementById('sTotalUnits').textContent = inv.reduce((s,i)=>s+i.stock,0).toLocaleString();
+  const myReq = db.requests.filter(r=>r.sid===currentUser.id);
+  document.getElementById('sReqToday').textContent = myReq.length;
+  const grid = document.getElementById('suppInvGrid');
+  if (!inv.length) { grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1;">No inventory yet. Add parts to activate your agent.</div>'; return; }
+  grid.innerHTML = inv.map(i => `
+    <div class="inv-card">
+      <div class="inv-part">${i.part}</div>
+      <div class="inv-price">$${i.price}</div>
+      <div class="inv-detail">${i.stock.toLocaleString()} units · MOQ ${i.moq}</div>
+      <div class="inv-detail">Lead time: ${i.lead}</div>
+      <div class="inv-avail ${i.stock<100?'low':''}">${i.stock>100?'In Stock':'Low Stock'}</div>
+    </div>`).join('');
+}
+
+function renderReq() {
+  const myReq = db.requests.filter(r=>r.sid===currentUser.id);
+  const el = document.getElementById('suppReqList');
+  if (!myReq.length) { el.innerHTML = '<div class="empty-state">No requests yet.</div>'; return; }
+  el.innerHTML = myReq.map(r => `
+    <div class="req-card">
+      <div class="req-info"><h4>${r.customer} — ${r.part} × ${r.qty}</h4><p>Received at ${r.time}</p></div>
+      <span class="tag ${r.status==='replied'?'green':'gold'}">${r.status.charAt(0).toUpperCase()+r.status.slice(1)}</span>
+    </div>`).join('');
+}
+
+function renderAna() {
+  const myReq = db.requests.filter(r=>r.sid===currentUser.id);
+  const inv = db.inventory[currentUser.id]||[];
+  document.getElementById('anaTot').textContent = myReq.length;
+  document.getElementById('anaResp').textContent = myReq.filter(r=>r.status==='replied').length;
+  document.getElementById('anaOOS2').textContent = 0;
+  const rev = myReq.reduce((s,r)=>{ const item=inv.find(i=>i.part===r.part); return s+(item?item.price*r.qty:0); },0);
+  document.getElementById('anaRev').textContent = '$'+rev.toLocaleString();
+  const byPart = {};
+  myReq.forEach(r=>{byPart[r.part]=(byPart[r.part]||0)+1;});
+  const body = document.getElementById('anaTableBody');
+  if (!Object.keys(byPart).length) { body.innerHTML = '<div class="empty-state">No data yet.</div>'; return; }
+  body.innerHTML = `<table><thead><tr><th>Component</th><th>Total Requests</th><th>Status</th></tr></thead><tbody>` +
+    Object.entries(byPart).map(([part,count])=>`<tr><td style="font-weight:500;">${part}</td><td>${count}</td><td><span class="tag green">Responded</span></td></tr>`).join('') +
+    `</tbody></table>`;
+}
+
+function addSuppLog(title, detail) {
+  const log = document.getElementById('suppActivityLog');
+  log.innerHTML += `<div class="msg-row"><div class="msg-who">Agent · ${new Date().toLocaleTimeString()}</div><div class="msg-bub agent"><strong>${title}</strong><br>${detail}</div></div>`;
+  log.scrollTop = log.scrollHeight;
+}
+
+function suppChat() {
+  const input = document.getElementById('suppInput');
+  const msg = input.value.trim();
+  if (!msg) return;
+  input.value = '';
+  const log = document.getElementById('suppActivityLog');
+  log.innerHTML += `<div class="msg-row right"><div class="msg-who">${currentUser.company}</div><div class="msg-bub" style="background:var(--supplier);color:#fff;border-bottom-right-radius:2px;">${msg}</div></div>`;
+  setTimeout(() => { addSuppLog('Agent Response', 'Instruction received. I will apply this to future buyer interactions.'); }, 800);
+}
+
+function updateSuppBadge() {
+  // no badge in tab approach but requests count updates
+}
+
+// Enter to send
+document.addEventListener('keydown', e => {
+  if (e.key==='Enter' && !e.shiftKey) {
+    if (document.activeElement.id==='buyerInput') { e.preventDefault(); buyerSend(); }
+    if (document.activeElement.id==='suppInput') { e.preventDefault(); suppChat(); }
+  }
+});
+
+showLanding();
+</script>
+</body>
+</html>
