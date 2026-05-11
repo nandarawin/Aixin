@@ -1533,87 +1533,91 @@ function parseInventoryMessage(msg) {
   if (!db.inventory[currentUser.id]) db.inventory[currentUser.id] = [];
   const inv = db.inventory[currentUser.id];
 
-  // Detect out of stock
-  if (lower.includes('out of stock') || lower.includes('no stock') || lower.includes('sold out')) {
-    const partMatch = msg.match(/[A-Z][A-Z0-9\-]+/g);
-    if (partMatch) {
-      const part = partMatch[0];
-      const existing = inv.find(i => i.part.toLowerCase().includes(part.toLowerCase()));
-      if (existing) {
-        existing.stock = 0;
-        return `Understood. I have updated ${existing.part} to out of stock. I will inform buyers of unavailability when they request this item.`;
-      }
+  // Extract part name - look for known parts or capitalized codes
+  function extractPart(text) {
+    const known = ['ESP32-WROOM-32E','ESP32-S3','ESP32-C3','STM32F103C8T6','STM32F401','ATMEGA328P-PU','Raspberry Pi 4B','DHT22','RP2040','nRF24L01','HC-SR04','BMP280','SIM800L'];
+    for (const p of known) {
+      if (text.toLowerCase().includes(p.toLowerCase())) return p;
     }
-    return 'Please specify which part is out of stock.';
+    // Also try to match part-like patterns
+    const m = text.match(/([A-Z][A-Z0-9]{2,}(?:[-][A-Z0-9]+)*)/);
+    return m ? m[1] : null;
   }
 
-  // Detect price update
-  if (lower.includes('update') && lower.includes('price')) {
-    const partMatch = msg.match(/[A-Z][A-Z0-9\-]+/g);
-    const priceMatch = msg.match(/\$?([\d.]+)\s*(?:each|per unit|\/unit)?/);
-    if (partMatch && priceMatch) {
-      const part = partMatch[0];
-      const price = parseFloat(priceMatch[1]);
-      const existing = inv.find(i => i.part.toLowerCase().includes(part.toLowerCase()));
-      if (existing) {
-        existing.price = price;
-        return `Price updated. ${existing.part} is now $${price} per unit. Buyers will see this new price immediately.`;
-      }
-    }
-    return 'I could not find that part in your inventory to update.';
+  // Extract price
+  function extractPrice(text) {
+    const m = text.match(/\$\s*([\d.]+)|([\d.]+)\s*(?:dollars?|each|per unit|\/unit)/i);
+    if (m) return parseFloat(m[1] || m[2]);
+    // just a number after "at" or "for"
+    const m2 = text.match(/(?:at|for)\s*\$?\s*([\d.]+)/i);
+    return m2 ? parseFloat(m2[1]) : null;
   }
 
-  // Detect adding new stock or updating existing
-  const priceMatch = msg.match(/\$?([\d.]+)\s*(?:each|per unit|\/unit|each unit)?/i);
-  const qtyMatch = msg.match(/(\d[\d,]*)\s*(?:units?|pcs?|pieces?|in stock)?/i);
+  // Extract quantity
+  function extractQty(text) {
+    const m = text.match(/(\d[\d,]*)\s*(?:units?|pcs?|pieces?|in stock)/i);
+    if (m) return parseInt(m[1].replace(',',''));
+    const m2 = text.match(/(?:have|got|stock)\s+(\d[\d,]*)/i);
+    if (m2) return parseInt(m2[1].replace(',',''));
+    const m3 = text.match(/^(\d[\d,]*)\s/);
+    return m3 ? parseInt(m3[1].replace(',','')) : null;
+  }
+
+  const part = extractPart(msg);
+  const price = extractPrice(msg);
+  const qty = extractQty(msg);
   const moqMatch = msg.match(/moq\s*:?\s*(\d+)/i);
-  const leadMatch = msg.match(/(\d+[-–]\d+\s*(?:business\s*)?days?)/i);
+  const moq = moqMatch ? parseInt(moqMatch[1]) : 10;
+  const leadMatch = msg.match(/(\d+[-]\d+\s*(?:business\s*)?days?)/i);
+  const lead = leadMatch ? leadMatch[1] : '3-5 days';
 
-  // Extract part number (caps with numbers and hyphens)
-  const partMatches = msg.match(/[A-Z][A-Z0-9]{1,}(?:[-\/][A-Z0-9]+)*/g);
-  const part = partMatches ? partMatches[0] : null;
+  // Out of stock
+  if (lower.includes('out of stock') || lower.includes('no stock') || lower.includes('sold out') || lower.includes('none left')) {
+    if (part) {
+      const ex = inv.find(i => i.part.toLowerCase().includes(part.toLowerCase()));
+      if (ex) { ex.stock = 0; return `Understood. I have marked ${ex.part} as out of stock. Buyers will be informed when they request this item.`; }
+      else { inv.push({ part, price: 0, stock: 0, moq: 1, lead: 'TBD', desc: 'Out of stock' }); return `Noted. ${part} has been added as out of stock.`; }
+    }
+    return 'Which part is out of stock? Please mention the part name.';
+  }
 
-  if (part && priceMatch) {
-    const price = parseFloat(priceMatch[1]);
-    const qty = qtyMatch ? parseInt(qtyMatch[1].replace(',','')) : 100;
-    const moq = moqMatch ? parseInt(moqMatch[1]) : 10;
-    const lead = leadMatch ? leadMatch[1] : '3-5 days';
+  // Price update only
+  if ((lower.includes('update') || lower.includes('change')) && lower.includes('price') && part && price) {
+    const ex = inv.find(i => i.part.toLowerCase().includes(part.toLowerCase()));
+    if (ex) { ex.price = price; return `Updated. ${ex.part} price is now $${price}/unit. All future buyer quotes will use this price.`; }
+    else return `I do not have ${part} in your inventory yet. Tell me the stock quantity too and I will add it.`;
+  }
 
-    const existing = inv.find(i => i.part.toLowerCase() === part.toLowerCase());
-    if (existing) {
-      existing.price = price;
-      existing.stock = qty;
-      if (moqMatch) existing.moq = moq;
-      if (leadMatch) existing.lead = lead;
-      return `Updated. ${part}: $${price}/unit, ${qty.toLocaleString()} units in stock, lead time ${lead}. Buyers can now request quotes for this item.`;
+  // Add or update inventory
+  if (part && price) {
+    const quantity = qty || 100;
+    const ex = inv.find(i => i.part.toLowerCase() === part.toLowerCase());
+    if (ex) {
+      ex.price = price;
+      ex.stock = quantity;
+      ex.moq = moq;
+      ex.lead = lead;
+      return `Updated inventory. ${part}: $${price}/unit, ${quantity.toLocaleString()} units in stock, MOQ ${moq}, lead time ${lead}. Buyers will see updated pricing immediately.`;
     } else {
-      inv.push({ part, price, stock: qty, moq, lead, desc: '' });
-      return `Added to inventory. ${part}: $${price}/unit, ${qty.toLocaleString()} units available, MOQ ${moq}, lead time ${lead}. Your agent will now quote this to buyers automatically.`;
+      inv.push({ part, price, stock: quantity, moq, lead, desc: '' });
+      return `Added to inventory. ${part}: $${price}/unit, ${quantity.toLocaleString()} units available, MOQ ${moq}, lead time ${lead}. Your agent will now quote this to buyers automatically.`;
     }
   }
 
-  // Check stock query
-  if (lower.includes('what') || lower.includes('show') || lower.includes('list') || lower.includes('my inventory')) {
-    if (inv.length === 0) return 'Your inventory is currently empty. Tell me what parts you have and I will add them.';
-    return 'Your current inventory:<br>' + inv.map(i => `• ${i.part} — $${i.price}/unit, ${i.stock.toLocaleString()} units`).join('<br>');
+  // Show inventory
+  if (lower.includes('show') || lower.includes('list') || lower.includes('what do i have') || lower.match(/my inventory/)) {
+    if (inv.length === 0) return 'Your inventory is currently empty. Tell me what parts you have in stock and I will remember them.';
+    return 'Your current inventory:<br>' + inv.map(i => `<strong>${i.part}</strong> — $${i.price}/unit, ${i.stock.toLocaleString()} units${i.stock === 0 ? ' (Out of Stock)' : ''}`).join('<br>');
   }
 
-  return 'I could not quite understand that. Try saying something like: "I have 500 ESP32-WROOM-32E at $2.80 each, lead time 3-5 days" and I will add it to your inventory.';
-}
-
-function updateSuppBadge() {
-  // no badge in tab approach but requests count updates
-}
-
-// Enter to send
-document.addEventListener('keydown', e => {
-  if (e.key==='Enter' && !e.shiftKey) {
-    if (document.activeElement.id==='buyerInput') { e.preventDefault(); buyerSend(); }
-    if (document.activeElement.id==='suppInput') { e.preventDefault(); suppChat(); }
+  // Remove item
+  if (lower.includes('remove') || lower.includes('delete')) {
+    if (part) {
+      const idx = inv.findIndex(i => i.part.toLowerCase().includes(part.toLowerCase()));
+      if (idx > -1) { inv.splice(idx, 1); return `Removed ${part} from your inventory.`; }
+    }
+    return 'Which part would you like to remove?';
   }
-});
 
-showLanding();
-</script>
-</body>
-</html>
+  return `I did not quite catch that. You can say things like:<br>• "I have 500 ESP32-WROOM-32E at $2.80 each"<br>• "Add 1000 STM32F103C8T6 at $2.90, MOQ 50"<br>• "We are out of stock of Raspberry Pi 4B"<br>• "Update ESP32 price to $2.60"<br>• "Show my inventory"`;
+}
