@@ -1640,3 +1640,320 @@ function parseInventoryMessage(msg) {
 
   return `I did not quite understand that. Try:<br>• "I have 500 ESP32-WROOM-32E at $2.80 each, lead time 3-5 days"<br>• "Add 1000 STM32F103C8T6 at $2.90, MOQ 50"<br>• "Out of stock: Raspberry Pi 4B"<br>• "Update ESP32 price to $2.60"<br>• "Show my inventory"`;
 }
+
+function showLanding() {
+  ['auth','buyer-shell','supplier-shell'].forEach(id => { const el = document.getElementById(id); if(el) el.style.display='none'; });
+  document.getElementById('landing').style.display = 'flex';
+  document.getElementById('landing').style.flexDirection = 'column';
+}
+
+function showAuth(type, mode) {
+  userType = type; authMode = mode;
+  document.getElementById('landing').style.display = 'none';
+  document.getElementById('auth').style.display = 'block';
+  const isSupplier = type === 'supplier';
+  const panel = document.getElementById('authLeftPanel');
+  panel.className = 'auth-left' + (isSupplier ? ' supplier-side' : '');
+  document.getElementById('authLeftTitle').textContent = isSupplier ? 'Sell Smarter,\nAutomate.' : 'Procurement,\nAutomated.';
+  document.getElementById('authLeftSub').textContent = isSupplier
+    ? 'Your agent handles buyer inquiries 24/7 from your inventory catalogue.'
+    : 'Your agent negotiates with suppliers while you focus on your business.';
+  const isLogin = mode === 'login';
+  document.getElementById('authTitle').textContent = isLogin ? 'Welcome back' : 'Create your account';
+  document.getElementById('authSubtitle').textContent = isLogin ? 'Sign in to your account' : (isSupplier ? 'Join as a supplier' : 'Join as a buyer');
+  document.getElementById('signupOnly').style.display = isLogin ? 'none' : 'block';
+  document.getElementById('authBtn').textContent = isLogin ? 'Sign In' : 'Create Account';
+  document.getElementById('authBtn').className = 'btn btn-full ' + (isSupplier ? 'btn-supplier' : 'btn-primary');
+  document.getElementById('authSwitch').innerHTML = isLogin
+    ? 'No account? <a onclick="toggleMode()">Sign up</a>'
+    : 'Already have an account? <a onclick="toggleMode()">Sign in</a>';
+  document.getElementById('demoBtn').textContent = isSupplier ? 'Demo: Nexwah Components' : 'Demo: TechBuild Electronics';
+}
+
+function toggleMode() { showAuth(userType, authMode === 'login' ? 'signup' : 'login'); }
+
+function demoLogin() {
+  if (userType === 'customer') loginUser(db.users[0]);
+  else loginUser(db.users[1]);
+}
+
+function handleAuth() {
+  const email = document.getElementById('authEmail').value || 'new@company.com';
+  const pw = document.getElementById('authPassword').value || 'pass';
+  const companyEl = document.getElementById('authCompany');
+  const company = companyEl ? companyEl.value || email.split('@')[0] : email.split('@')[0];
+  if (authMode === 'login') {
+    const found = db.users.find(u => u.email === email && u.type === userType);
+    loginUser(found || { id: Date.now(), type: userType, company: email.split('@')[1] || 'Company', email, avatar: email[0].toUpperCase() });
+  } else {
+    const u = { id: Date.now(), type: userType, company: company, email, password: pw, avatar: company[0].toUpperCase() };
+    db.users.push(u);
+    if (userType === 'supplier') db.inventory[u.id] = [];
+    loginUser(u);
+  }
+}
+
+function loginUser(user) {
+  currentUser = user;
+  document.getElementById('auth').style.display = 'none';
+  if (user.type === 'customer') {
+    document.getElementById('buyer-shell').style.display = 'flex';
+    document.getElementById('buyerAvatar').textContent = user.avatar;
+    document.getElementById('buyerName').textContent = user.company;
+    document.getElementById('buyerChatAvatar').textContent = user.avatar;
+    document.getElementById('buyerAgentName').textContent = user.company + ' Procurement Agent';
+    document.getElementById('buyerWelcomeMsg').textContent = 'Good day. I am your procurement agent for ' + user.company + '. Tell me what electronic components you need and I will contact supplier agents on the platform to find you the best available pricing.';
+    document.getElementById('bsCompany').textContent = user.company;
+    document.getElementById('bsEmail').textContent = user.email;
+    loadBuyerSuppliers();
+  } else {
+    document.getElementById('supplier-shell').style.display = 'flex';
+    document.getElementById('supplierAvatar').textContent = user.avatar;
+    document.getElementById('supplierName').textContent = user.company;
+    document.getElementById('suppChatAvatar').textContent = user.avatar;
+    document.getElementById('suppAgentName').textContent = user.company + ' Supplier Agent';
+    document.getElementById('ssCompany').textContent = user.company;
+    document.getElementById('ssEmail').textContent = user.email;
+    renderInv();
+  }
+}
+
+function logout() {
+  currentUser = null;
+  ['buyer-shell','supplier-shell'].forEach(id => { document.getElementById(id).style.display='none'; });
+  showLanding();
+}
+
+function buyerPage(p) {
+  document.querySelectorAll('#buyer-shell .plat-page').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('#buyer-shell .plat-tab').forEach(el => el.classList.remove('active'));
+  document.getElementById('buyer-' + p).classList.add('active');
+  const tab = document.getElementById('btab-' + p);
+  if (tab) tab.classList.add('active');
+  if (p === 'suppliers') loadBuyerSuppliers();
+  if (p === 'orders') renderBuyerOrders();
+}
+
+async function buyerSend() {
+  const input = document.getElementById('buyerInput');
+  const msg = input.value.trim();
+  if (!msg) return;
+  input.value = '';
+  addBuyerMsg(msg, 'user');
+  document.getElementById('buyerSendBtn').disabled = true;
+
+  const tid = 'think-' + Date.now();
+  const msgs = document.getElementById('buyerMsgs');
+  msgs.innerHTML += `<div class="msg-row" id="${tid}"><div class="msg-who">Agent</div><div class="msg-bub thinking">Contacting supplier agents on Laptop B <span class="dots"><span></span><span></span><span></span></span></div></div>`;
+  msgs.scrollTop = msgs.scrollHeight;
+
+  let reply = '';
+  let source = 'simulated';
+
+  try {
+    const res = await fetch('http://localhost:3001/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: msg })
+    });
+    if (res.ok) {
+      const data = await res.json();
+      reply = data.reply;
+      source = 'real';
+    } else {
+      reply = genBuyerReply(msg);
+    }
+  } catch(e) {
+    reply = genBuyerReply(msg);
+  }
+
+  const el = document.getElementById(tid);
+  if (el) el.remove();
+
+  if (source === 'real') reply = reply + '\n\n[Response from Supplier Agent — Laptop B via OpenClaw]';
+
+  addBuyerMsg(reply, 'agent');
+  document.getElementById('buyerSendBtn').disabled = false;
+
+  if (msg.toLowerCase().match(/need|want|order|looking for|require/)) {
+    db.orders.push({ id: Date.now(), request: msg, reply, time: new Date().toLocaleString(), status: source === 'real' ? 'Live Quote' : 'Simulated Quote' });
+  }
+}
+
+function genBuyerReply(msg) {
+  const lower = msg.toLowerCase();
+  const allInv = [];
+  db.users.filter(u => u.type === 'supplier').forEach(s => {
+    (db.inventory[s.id] || []).forEach(i => allInv.push({ ...i, supplier: s.company, sid: s.id }));
+  });
+
+  const match = allInv.find(i =>
+    lower.includes(i.part.toLowerCase()) ||
+    (lower.includes('esp32') && i.part.toLowerCase().includes('esp32')) ||
+    (lower.includes('stm32') && i.part.toLowerCase().includes('stm32')) ||
+    (lower.includes('raspberry') && i.part.toLowerCase().includes('raspberry')) ||
+    (lower.includes('dht') && i.part.toLowerCase().includes('dht')) ||
+    (lower.includes('atmega') && i.part.toLowerCase().includes('atmega'))
+  );
+
+  const qm = msg.match(/(\d+)/);
+  const qty = qm ? parseInt(qm[1]) : 100;
+
+  if (lower.includes('confirm')) {
+    const lastOrder = db.orders[db.orders.length - 1];
+    if (lastOrder) {
+      lastOrder.status = 'Confirmed';
+      db.requests.push({ id: Date.now(), customer: currentUser.company, part: 'Confirmed Order', qty: 0, sid: 2, status: 'confirmed', time: new Date().toLocaleTimeString() });
+      return `Order confirmed. I have notified the supplier agent and submitted the purchase request.\n\nOrder Reference: ORD-${Date.now().toString().slice(-6)}\nStatus: Confirmed — awaiting supplier acknowledgement\nEstimated delivery: 3-5 business days\n\nYou will receive a notification when the supplier agent confirms shipment.`;
+    }
+    return 'No pending order to confirm. Please request a quote first.';
+  }
+
+  if (match) {
+    const allMatches = allInv.filter(i => i.part.toLowerCase().includes(match.part.split('-')[0].toLowerCase()) || i.part === match.part);
+    const total = (match.price * qty).toFixed(2);
+    if (match.stock >= qty) {
+      let response = `I contacted ${allMatches.length} supplier agent${allMatches.length > 1 ? 's' : ''} and received the following quotes for ${match.part}:\n\n`;
+      allMatches.forEach((m, idx) => {
+        const t = (m.price * qty).toFixed(2);
+        response += `${idx+1}. ${m.supplier}\n   Price: $${m.price}/unit  |  Total: $${t}  |  Stock: ${m.stock} units\n   Lead Time: ${m.lead}\n\n`;
+      });
+      const best = [...allMatches].sort((a,b) => a.price - b.price)[0];
+      response += `Best price: ${best.supplier} at $${best.price}/unit.\n\nReply "confirm" to place the order.`;
+      return response;
+    } else {
+      return `I contacted supplier agents for ${match.part}. Best available:\n\nSupplier: ${match.supplier}\nAvailable: ${match.stock} units (you need ${qty})\nPartial order: $${(match.price * match.stock).toFixed(2)}\n\nReply "confirm partial" to proceed with ${match.stock} units.`;
+    }
+  }
+
+  if (lower.match(/hi|hello|good/)) return `Good day. I am ready to source components for you. Ask for parts like: "I need 500 ESP32-WROOM-32E chips" and I will check all active suppliers immediately.`;
+
+  if (allInv.length > 0) return `I searched the platform but could not find an exact match. Currently available: ${allInv.slice(0,4).map(i=>i.part).join(', ')}. Would you like quotes for any of these?`;
+
+  return `No suppliers are currently active on the platform. Once suppliers add their inventory, I can retrieve instant quotes for you.`;
+}
+
+function addBuyerMsg(text, role) {
+  const msgs = document.getElementById('buyerMsgs');
+  const who = role === 'user' ? currentUser.company : 'Agent';
+  const cls = role === 'user' ? 'right' : '';
+  msgs.innerHTML += `<div class="msg-row ${cls}"><div class="msg-who">${who}</div><div class="msg-bub ${role}">${text.replace(/\n/g,'<br>')}</div></div>`;
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function renderBuyerOrders() {
+  const body = document.getElementById('buyerOrdersBody');
+  if (!db.orders.length) { body.innerHTML = '<div class="empty-state">No orders yet.</div>'; return; }
+  body.innerHTML = `<table><thead><tr><th>Request</th><th>Time</th><th>Status</th></tr></thead><tbody>` +
+    db.orders.map(o => `<tr><td style="font-weight:500;max-width:400px;">${o.request}</td><td style="font-family:'DM Mono',monospace;color:var(--text-3);font-size:12px;">${o.time}</td><td><span class="tag ${o.status==='Confirmed'?'green':o.status==='Live Quote'?'blue':'gold'}">${o.status}</span></td></tr>`).join('') +
+    `</tbody></table>`;
+}
+
+function loadBuyerSuppliers() {
+  const suppliers = db.users.filter(u => u.type === 'supplier');
+  const el = document.getElementById('buyerSupplierCards');
+  if (!suppliers.length) { el.innerHTML = '<div class="empty-state">No suppliers on platform yet.</div>'; return; }
+  el.innerHTML = suppliers.map(s => {
+    const inv = db.inventory[s.id] || [];
+    const totalStock = inv.reduce((sum,i) => sum+i.stock, 0);
+    return `<div class="supp-card"><div class="supp-card-tag">Verified Supplier</div><h3>${s.company}</h3><p>${inv.length} components · ${totalStock.toLocaleString()} units total</p><div style="margin-top:10px;font-size:12px;color:var(--text-3);">${inv.slice(0,3).map(i=>i.part).join(', ')}${inv.length>3?' +more':''}</div><div class="supp-card-footer"><div class="supp-online"><div class="status-dot" style="width:5px;height:5px;"></div>Agent Online</div><span class="tag green">${inv.length} parts</span></div></div>`;
+  }).join('');
+}
+
+function supplierPage(p) {
+  document.querySelectorAll('#supplier-shell .plat-page').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('#supplier-shell .plat-tab').forEach(el => el.classList.remove('active'));
+  document.getElementById('supplier-' + p).classList.add('active');
+  const tab = document.getElementById('stab-' + p);
+  if (tab) tab.classList.add('active', 'supplier');
+  if (p === 'inventory') renderInv();
+  if (p === 'requests') renderReq();
+  if (p === 'analytics') renderAna();
+}
+
+function renderInv() {
+  const inv = db.inventory[currentUser.id] || [];
+  document.getElementById('sTotalParts').textContent = inv.length;
+  document.getElementById('sTotalUnits').textContent = inv.reduce((s,i)=>s+i.stock,0).toLocaleString();
+  const myReq = db.requests.filter(r=>r.sid===currentUser.id);
+  document.getElementById('sReqToday').textContent = myReq.length;
+  const grid = document.getElementById('suppInvGrid');
+  if (!inv.length) { grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1;">No inventory yet. Go to Agent Activity and tell your agent what you have in stock.</div>'; return; }
+  grid.innerHTML = inv.map(i => `
+    <div class="inv-card">
+      <div class="inv-part">${i.part}</div>
+      <div class="inv-price">$${i.price}</div>
+      <div class="inv-detail">${i.stock.toLocaleString()} units · MOQ ${i.moq}</div>
+      <div class="inv-detail">Lead time: ${i.lead}</div>
+      <div class="inv-avail ${i.stock===0?'low':i.stock<100?'low':''}">${i.stock===0?'Out of Stock':i.stock<100?'Low Stock':'In Stock'}</div>
+    </div>`).join('');
+}
+
+function renderReq() {
+  const myReq = db.requests.filter(r=>r.sid===currentUser.id);
+  const el = document.getElementById('suppReqList');
+  document.getElementById('sReqToday').textContent = myReq.length;
+  if (!myReq.length) { el.innerHTML = '<div class="empty-state">No requests yet.</div>'; return; }
+  el.innerHTML = myReq.map(r => `
+    <div class="req-card">
+      <div class="req-info"><h4>${r.customer} — ${r.part} × ${r.qty}</h4><p>Received at ${r.time}</p></div>
+      <span class="tag ${r.status==='replied'||r.status==='confirmed'?'green':'gold'}">${r.status.charAt(0).toUpperCase()+r.status.slice(1)}</span>
+    </div>`).join('');
+}
+
+function renderAna() {
+  const myReq = db.requests.filter(r=>r.sid===currentUser.id);
+  const inv = db.inventory[currentUser.id]||[];
+  document.getElementById('anaTot').textContent = myReq.length;
+  document.getElementById('anaResp').textContent = myReq.filter(r=>r.status==='replied'||r.status==='confirmed').length;
+  document.getElementById('anaOOS2').textContent = inv.filter(i=>i.stock===0).length;
+  const rev = myReq.reduce((s,r)=>{ const item=inv.find(i=>i.part===r.part); return s+(item?item.price*r.qty:0); },0);
+  document.getElementById('anaRev').textContent = '$'+rev.toLocaleString();
+  const byPart = {};
+  myReq.forEach(r=>{byPart[r.part]=(byPart[r.part]||0)+1;});
+  const body = document.getElementById('anaTableBody');
+  if (!Object.keys(byPart).length) { body.innerHTML = '<div class="empty-state">No data yet.</div>'; return; }
+  body.innerHTML = `<table><thead><tr><th>Component</th><th>Total Requests</th><th>Status</th></tr></thead><tbody>` +
+    Object.entries(byPart).map(([part,count])=>`<tr><td style="font-weight:500;">${part}</td><td>${count}</td><td><span class="tag green">Responded</span></td></tr>`).join('') +
+    `</tbody></table>`;
+}
+
+function addSuppLog(title, detail) {
+  const log = document.getElementById('suppActivityLog');
+  if (!log) return;
+  log.innerHTML += `<div class="msg-row"><div class="msg-who">Agent · ${new Date().toLocaleTimeString()}</div><div class="msg-bub agent"><strong>${title}</strong><br>${detail}</div></div>`;
+  log.scrollTop = log.scrollHeight;
+}
+
+function suppChat() {
+  const input = document.getElementById('suppInput');
+  const msg = input.value.trim();
+  if (!msg) return;
+  input.value = '';
+
+  const log = document.getElementById('suppActivityLog');
+  log.innerHTML += `<div class="msg-row right"><div class="msg-who">${currentUser.company}</div><div class="msg-bub" style="background:var(--supplier);color:#fff;border-bottom-right-radius:2px;">${msg.replace(/\n/g,'<br>')}</div></div>`;
+  log.scrollTop = log.scrollHeight;
+
+  const lines = msg.split('\n').map(l => l.trim()).filter(l => l.length > 3);
+  const replies = lines.length > 1 ? lines.map(l => parseInventoryMessage(l)) : [parseInventoryMessage(msg)];
+
+  setTimeout(() => {
+    const combined = replies.join('<br><br>');
+    log.innerHTML += `<div class="msg-row"><div class="msg-who">Agent</div><div class="msg-bub agent">${combined}</div></div>`;
+    log.scrollTop = log.scrollHeight;
+    renderInv();
+  }, 600);
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key==='Enter' && !e.shiftKey) {
+    if (document.activeElement.id==='buyerInput') { e.preventDefault(); buyerSend(); }
+    if (document.activeElement.id==='suppInput') { e.preventDefault(); suppChat(); }
+  }
+});
+
+showLanding();
+</script>
+</body>
+</html>
