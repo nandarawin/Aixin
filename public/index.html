@@ -6,1950 +6,746 @@
 <title>Aixinchips — AI Procurement Platform</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root {
-  --white: #ffffff;
-  --off-white: #fafaf8;
-  --light: #f4f3ef;
-  --light-2: #eceae4;
-  --border: #dddbd4;
-  --border-2: #e8e6e0;
-  --text: #1a1916;
-  --text-2: #4a4844;
-  --text-3: #8a8880;
-  --accent: #1a3a5c;
-  --accent-light: #eef3f8;
-  --accent-2: #c8a96e;
-  --accent-2-light: #faf6ef;
-  --supplier: #2d5a3d;
-  --supplier-light: #eef5f0;
-  --danger: #c0392b;
-  --danger-light: #fdf0ee;
-  --success: #2d5a3d;
-}
-
-* { margin: 0; padding: 0; box-sizing: border-box; }
-
-body {
-  background: var(--off-white);
-  color: var(--text);
-  font-family: 'DM Sans', sans-serif;
-  min-height: 100vh;
-  font-size: 14px;
-  line-height: 1.6;
-}
-
-/* ===== LANDING ===== */
-#landing { display: flex; flex-direction: column; min-height: 100vh; }
-
-.land-nav {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 64px;
-  height: 68px;
-  background: var(--white);
-  border-bottom: 1px solid var(--border);
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-
-.land-logo {
-  font-family: 'Playfair Display', serif;
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--text);
-  letter-spacing: -0.5px;
-}
-
-.land-logo span { color: var(--accent); }
-
-.land-nav-links { display: flex; align-items: center; gap: 32px; }
-
-.land-nav-link {
-  font-size: 13px;
-  color: var(--text-2);
-  cursor: pointer;
-  font-weight: 500;
-  transition: color 0.2s;
-}
-.land-nav-link:hover { color: var(--text); }
-
-.land-nav-actions { display: flex; gap: 10px; }
-
-/* Buttons */
-.btn {
-  padding: 10px 22px;
-  border-radius: 6px;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  border: none;
-  transition: all 0.2s;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.btn-outline {
-  background: transparent;
-  color: var(--text);
-  border: 1.5px solid var(--border);
-}
-.btn-outline:hover { border-color: var(--text); }
-
-.btn-primary {
-  background: var(--accent);
-  color: #fff;
-}
-.btn-primary:hover { background: #1e4a72; }
-
-.btn-gold {
-  background: var(--accent-2);
-  color: var(--white);
-}
-.btn-gold:hover { background: #b8993e; }
-
-.btn-supplier {
-  background: var(--supplier);
-  color: #fff;
-}
-.btn-supplier:hover { background: #1e4a2a; }
-
-.btn-lg {
-  padding: 14px 32px;
-  font-size: 14px;
-  border-radius: 8px;
-}
-
-.btn-full { width: 100%; justify-content: center; margin-top: 8px; padding: 13px; }
-
-.btn-sm { padding: 7px 14px; font-size: 12px; }
-
-/* Hero */
-.land-hero {
-  flex: 1;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  min-height: calc(100vh - 68px);
-}
-
-.hero-left {
-  padding: 80px 64px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  border-right: 1px solid var(--border);
-}
-
-.hero-eyebrow {
-  font-family: 'DM Mono', monospace;
-  font-size: 11px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: var(--accent);
-  margin-bottom: 20px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.hero-eyebrow::before {
-  content: '';
-  display: block;
-  width: 24px;
-  height: 1px;
-  background: var(--accent);
-}
-
-.hero-left h1 {
-  font-family: 'Playfair Display', serif;
-  font-size: clamp(40px, 5vw, 64px);
-  font-weight: 700;
-  line-height: 1.1;
-  letter-spacing: -1px;
-  margin-bottom: 24px;
-  color: var(--text);
-}
-
-.hero-left h1 em {
-  font-style: italic;
-  color: var(--accent);
-}
-
-.hero-left p {
-  font-size: 16px;
-  color: var(--text-2);
-  line-height: 1.8;
-  max-width: 480px;
-  margin-bottom: 40px;
-  font-weight: 300;
-}
-
-.hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
-
-.hero-right {
-  background: var(--light);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 80px 64px;
-  gap: 16px;
-}
-
-.account-card {
-  width: 100%;
-  max-width: 360px;
-  background: var(--white);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 28px;
-  transition: all 0.2s;
-  cursor: pointer;
-}
-.account-card:hover { border-color: var(--accent); box-shadow: 0 4px 20px rgba(26,58,92,0.08); }
-
-.account-card-header {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  margin-bottom: 12px;
-}
-
-.account-icon {
-  width: 44px;
-  height: 44px;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-}
-
-.account-icon.buyer { background: var(--accent-light); }
-.account-icon.seller { background: var(--supplier-light); }
-
-.account-card h3 { font-size: 16px; font-weight: 600; }
-.account-card p { font-size: 13px; color: var(--text-2); line-height: 1.6; }
-
-.account-card-footer {
-  margin-top: 16px;
-  display: flex;
-  justify-content: flex-end;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--accent);
-  cursor: pointer;
-}
-
-/* Stats bar */
-.land-stats {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  border-top: 1px solid var(--border);
-  background: var(--white);
-}
-
-.land-stat {
-  padding: 32px 48px;
-  border-right: 1px solid var(--border);
-}
-.land-stat:last-child { border-right: none; }
-
-.land-stat-num {
-  font-family: 'Playfair Display', serif;
-  font-size: 32px;
-  font-weight: 700;
-  color: var(--text);
-  margin-bottom: 4px;
-}
-
-.land-stat-label {
-  font-size: 12px;
-  color: var(--text-3);
-  font-weight: 500;
-}
-
-/* ===== AUTH ===== */
-#auth {
-  display: none;
-  min-height: 100vh;
-  background: var(--light);
-}
-
-.auth-layout {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  min-height: 100vh;
-}
-
-.auth-left {
-  background: var(--accent);
-  padding: 64px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  position: relative;
-  overflow: hidden;
-}
-
-.auth-left::before {
-  content: '';
-  position: absolute;
-  bottom: -100px;
-  right: -100px;
-  width: 400px;
-  height: 400px;
-  background: rgba(255,255,255,0.03);
-  border-radius: 50%;
-}
-
-.auth-left-logo {
-  font-family: 'Playfair Display', serif;
-  font-size: 22px;
-  font-weight: 700;
-  color: rgba(255,255,255,0.9);
-}
-
-.auth-left-content h2 {
-  font-family: 'Playfair Display', serif;
-  font-size: 36px;
-  font-weight: 700;
-  color: #fff;
-  line-height: 1.2;
-  margin-bottom: 16px;
-}
-
-.auth-left-content p {
-  font-size: 15px;
-  color: rgba(255,255,255,0.65);
-  line-height: 1.8;
-}
-
-.auth-left.supplier-side { background: var(--supplier); }
-
-.auth-right {
-  padding: 64px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--white);
-}
-
-.auth-form { width: 100%; max-width: 400px; }
-
-.auth-back {
-  font-size: 12px;
-  color: var(--text-3);
-  cursor: pointer;
-  margin-bottom: 40px;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-family: 'DM Mono', monospace;
-  letter-spacing: 0.5px;
-  transition: color 0.2s;
-}
-.auth-back:hover { color: var(--text); }
-
-.auth-form h2 {
-  font-family: 'Playfair Display', serif;
-  font-size: 28px;
-  font-weight: 700;
-  margin-bottom: 6px;
-}
-
-.auth-form p {
-  font-size: 13px;
-  color: var(--text-2);
-  margin-bottom: 32px;
-}
-
-.form-field { margin-bottom: 18px; }
-
-.form-label {
-  display: block;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-2);
-  letter-spacing: 0.3px;
-  margin-bottom: 6px;
-}
-
-.form-input {
-  width: 100%;
-  background: var(--off-white);
-  border: 1.5px solid var(--border);
-  border-radius: 8px;
-  padding: 11px 14px;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 14px;
-  color: var(--text);
-  transition: border-color 0.2s, box-shadow 0.2s;
-  outline: none;
-}
-.form-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(26,58,92,0.06); }
-.form-input.supplier:focus { border-color: var(--supplier); box-shadow: 0 0 0 3px rgba(45,90,61,0.06); }
-
-.auth-divider {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin: 16px 0;
-}
-.auth-divider::before, .auth-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-.auth-divider span { font-size: 12px; color: var(--text-3); }
-
-.auth-switch {
-  text-align: center;
-  margin-top: 20px;
-  font-size: 13px;
-  color: var(--text-3);
-}
-.auth-switch a { color: var(--accent); cursor: pointer; font-weight: 600; }
-
-/* ===== PLATFORM SHELL ===== */
-.platform-shell {
-  display: none;
-  min-height: 100vh;
-  flex-direction: column;
-}
-
-.plat-nav {
-  height: 60px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 32px;
-  background: var(--white);
-  border-bottom: 1px solid var(--border);
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-
-.plat-nav-left { display: flex; align-items: center; gap: 28px; }
-
-.plat-logo {
-  font-family: 'Playfair Display', serif;
-  font-size: 17px;
-  font-weight: 700;
-  color: var(--text);
-}
-
-.plat-logo span { color: var(--accent); }
-
-.plat-nav-tabs { display: flex; gap: 4px; }
-
-.plat-tab {
-  padding: 6px 14px;
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--text-2);
-  cursor: pointer;
-  border-radius: 6px;
-  transition: all 0.15s;
-}
-.plat-tab:hover { background: var(--light); color: var(--text); }
-.plat-tab.active { background: var(--accent-light); color: var(--accent); font-weight: 600; }
-.plat-tab.active.supplier { background: var(--supplier-light); color: var(--supplier); }
-
-.plat-nav-right { display: flex; align-items: center; gap: 12px; }
-
-.plat-user {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--text-2);
-}
-
-.plat-avatar {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  font-weight: 700;
-  font-family: 'DM Mono', monospace;
-}
-.plat-avatar.buyer { background: var(--accent-light); color: var(--accent); border: 1.5px solid rgba(26,58,92,0.2); }
-.plat-avatar.seller { background: var(--supplier-light); color: var(--supplier); border: 1.5px solid rgba(45,90,61,0.2); }
-
-/* Platform pages */
-.plat-body { flex: 1; }
-.plat-page { display: none; padding: 36px 40px; }
-.plat-page.active { display: block; }
-
-.plat-page-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 28px;
-  padding-bottom: 20px;
-  border-bottom: 1px solid var(--border-2);
-}
-
-.plat-page-head h1 {
-  font-family: 'Playfair Display', serif;
-  font-size: 26px;
-  font-weight: 700;
-  margin-bottom: 4px;
-}
-
-.plat-page-head p { font-size: 13px; color: var(--text-3); }
-
-/* Stats */
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-  margin-bottom: 28px;
-}
-
-.stat-box {
-  background: var(--white);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 20px 22px;
-}
-
-.stat-box-label { font-size: 11px; color: var(--text-3); font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 8px; }
-.stat-box-val { font-family: 'Playfair Display', serif; font-size: 30px; font-weight: 700; color: var(--text); }
-.stat-box-note { font-size: 11px; color: var(--text-3); margin-top: 4px; }
-.stat-box-val.blue { color: var(--accent); }
-.stat-box-val.green { color: var(--supplier); }
-.stat-box-val.gold { color: var(--accent-2); }
-
-/* Table */
-.data-table-wrap {
-  background: var(--white);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  overflow: hidden;
-  margin-bottom: 20px;
-}
-
-.data-table-head {
-  padding: 16px 20px;
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.data-table-head h3 { font-size: 14px; font-weight: 600; }
-
-table { width: 100%; border-collapse: collapse; }
-th {
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: var(--text-3);
-  font-weight: 600;
-  padding: 11px 20px;
-  text-align: left;
-  border-bottom: 1px solid var(--border);
-  background: var(--off-white);
-}
-td { padding: 13px 20px; border-bottom: 1px solid var(--border-2); font-size: 13px; }
-tr:last-child td { border-bottom: none; }
-tbody tr:hover td { background: var(--off-white); }
-
-/* Tags */
-.tag {
-  display: inline-block;
-  padding: 3px 10px;
-  border-radius: 20px;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.2px;
-}
-.tag.green { background: var(--supplier-light); color: var(--supplier); }
-.tag.red { background: var(--danger-light); color: var(--danger); }
-.tag.gold { background: var(--accent-2-light); color: var(--accent-2); }
-.tag.blue { background: var(--accent-light); color: var(--accent); }
-
-/* Chat */
-.chat-wrap {
-  background: var(--white);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  overflow: hidden;
-  height: calc(100vh - 250px);
-  display: flex;
-  flex-direction: column;
-}
-
-.chat-head {
-  padding: 16px 20px;
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  background: var(--white);
-}
-
-.chat-head-info h3 { font-size: 14px; font-weight: 600; }
-.chat-head-info p { font-size: 12px; color: var(--text-3); font-family: 'DM Mono', monospace; }
-
-.chat-status {
-  margin-left: auto;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 11px;
-  color: var(--supplier);
-  font-weight: 600;
-}
-
-.status-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--supplier);
-  animation: blink 2s infinite;
-}
-.status-dot.blue { background: var(--accent); }
-
-@keyframes blink { 0%,100%{opacity:1}50%{opacity:.3} }
-
-.chat-msgs {
-  flex: 1;
-  overflow-y: auto;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  background: var(--off-white);
-}
-
-.msg-row { display: flex; flex-direction: column; gap: 3px; }
-.msg-row.right { align-items: flex-end; }
-
-.msg-who { font-size: 11px; color: var(--text-3); font-family: 'DM Mono', monospace; }
-
-.msg-bub {
-  max-width: 72%;
-  padding: 11px 15px;
-  border-radius: 10px;
-  font-size: 13px;
-  line-height: 1.6;
-}
-
-.msg-bub.user {
-  background: var(--accent);
-  color: #fff;
-  border-bottom-right-radius: 2px;
-}
-
-.msg-bub.agent {
-  background: var(--white);
-  color: var(--text);
-  border: 1px solid var(--border);
-  border-bottom-left-radius: 2px;
-}
-
-.msg-bub.thinking {
-  background: var(--white);
-  border: 1px solid var(--border);
-  color: var(--text-3);
-  font-family: 'DM Mono', monospace;
-  font-size: 12px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.dots span {
-  display: inline-block;
-  width: 5px; height: 5px;
-  background: var(--accent);
-  border-radius: 50%;
-  animation: dot-bounce 1.2s infinite;
-}
-.dots span:nth-child(2) { animation-delay: 0.2s; }
-.dots span:nth-child(3) { animation-delay: 0.4s; }
-@keyframes dot-bounce { 0%,80%,100%{transform:scale(0.8)}40%{transform:scale(1.2)} }
-
-.chat-foot {
-  padding: 14px 16px;
-  border-top: 1px solid var(--border);
-  display: flex;
-  gap: 10px;
-  background: var(--white);
-}
-
-.chat-input {
-  flex: 1;
-  background: var(--off-white);
-  border: 1.5px solid var(--border);
-  border-radius: 8px;
-  padding: 10px 14px;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 13px;
-  color: var(--text);
-  resize: none;
-  outline: none;
-  transition: border-color 0.2s;
-}
-.chat-input:focus { border-color: var(--accent); }
-.chat-input.supp:focus { border-color: var(--supplier); }
-
-.chat-send {
-  background: var(--accent);
-  color: #fff;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 8px;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-.chat-send:hover { background: #1e4a72; }
-.chat-send.supp { background: var(--supplier); }
-.chat-send.supp:hover { background: #1e4a2a; }
-.chat-send:disabled { opacity: 0.5; cursor: not-allowed; }
-
-/* Inventory cards */
-.inv-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 14px;
-  margin-bottom: 24px;
-}
-
-.inv-card {
-  background: var(--white);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 20px;
-  border-left: 3px solid var(--supplier);
-}
-
-.inv-part { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text-3); margin-bottom: 6px; }
-.inv-price { font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
-.inv-detail { font-size: 12px; color: var(--text-3); margin-top: 2px; }
-.inv-avail { font-size: 11px; font-weight: 600; margin-top: 10px; color: var(--supplier); }
-.inv-avail.low { color: var(--danger); }
-
-/* Form */
-.form-card {
-  background: var(--white);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 28px;
-  margin-bottom: 20px;
-}
-.form-card h3 { font-size: 16px; font-weight: 600; margin-bottom: 20px; }
-.form-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 14px; }
-.fg { display: flex; flex-direction: column; gap: 5px; }
-.fg-label { font-size: 11px; font-weight: 600; color: var(--text-2); }
-.fg-input {
-  background: var(--off-white);
-  border: 1.5px solid var(--border);
-  border-radius: 6px;
-  padding: 9px 12px;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 13px;
-  color: var(--text);
-  outline: none;
-}
-.fg-input:focus { border-color: var(--supplier); }
-
-/* Supplier cards on buyer side */
-.supplier-cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 16px;
-}
-
-.supp-card {
-  background: var(--white);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 24px;
-  transition: all 0.2s;
-}
-.supp-card:hover { border-color: var(--accent); box-shadow: 0 2px 12px rgba(26,58,92,0.06); }
-
-.supp-card-tag { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-3); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 10px; }
-.supp-card h3 { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
-.supp-card p { font-size: 12px; color: var(--text-3); }
-.supp-card-footer { margin-top: 16px; display: flex; justify-content: space-between; align-items: center; }
-.supp-online { font-size: 11px; font-weight: 600; color: var(--supplier); display: flex; align-items: center; gap: 5px; }
-
-/* Request cards */
-.req-list { display: flex; flex-direction: column; gap: 10px; }
-.req-card {
-  background: var(--white);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 16px 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.req-info h4 { font-size: 14px; font-weight: 600; margin-bottom: 3px; }
-.req-info p { font-size: 12px; color: var(--text-3); font-family: 'DM Mono', monospace; }
-
-/* Settings page */
-.settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-.settings-card { background: var(--white); border: 1px solid var(--border); border-radius: 10px; padding: 24px; }
-.settings-card h3 { font-size: 15px; font-weight: 600; margin-bottom: 18px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
-
-.empty-state { padding: 48px; text-align: center; color: var(--text-3); font-size: 13px; font-family: 'DM Mono', monospace; }
+:root{--white:#fff;--off:#fafaf8;--light:#f4f3ef;--border:#dddbd4;--border2:#e8e6e0;--text:#1a1916;--text2:#4a4844;--text3:#8a8880;--accent:#1a3a5c;--acl:#eef3f8;--gold:#c8a96e;--goldl:#faf6ef;--supp:#2d5a3d;--suppl:#eef5f0;--danger:#c0392b;--dangerl:#fdf0ee}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--off);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;font-size:14px;line-height:1.6}
+.btn{padding:10px 22px;border-radius:6px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .2s;display:inline-flex;align-items:center;gap:8px}
+.btn-outline{background:transparent;color:var(--text);border:1.5px solid var(--border)}.btn-outline:hover{border-color:var(--text)}
+.btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{background:#1e4a72}
+.btn-supp{background:var(--supp);color:#fff}.btn-supp:hover{background:#1e4a2a}
+.btn-lg{padding:14px 32px;font-size:14px;border-radius:8px}
+.btn-full{width:100%;justify-content:center;margin-top:8px;padding:13px}
+.btn-sm{padding:7px 14px;font-size:12px}
+/* LANDING */
+#landing{display:flex;flex-direction:column;min-height:100vh}
+.land-nav{display:flex;justify-content:space-between;align-items:center;padding:0 64px;height:68px;background:var(--white);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+.land-logo{font-family:'Playfair Display',serif;font-size:20px;font-weight:700}
+.land-logo span{color:var(--accent)}
+.land-nav-actions{display:flex;gap:10px}
+.land-hero{flex:1;display:grid;grid-template-columns:1fr 1fr;min-height:calc(100vh - 68px)}
+.hero-left{padding:80px 64px;display:flex;flex-direction:column;justify-content:center;border-right:1px solid var(--border)}
+.hero-eye{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:20px;display:flex;align-items:center;gap:8px}
+.hero-eye::before{content:'';display:block;width:24px;height:1px;background:var(--accent)}
+.hero-left h1{font-family:'Playfair Display',serif;font-size:clamp(36px,4vw,58px);font-weight:700;line-height:1.1;letter-spacing:-1px;margin-bottom:24px}
+.hero-left h1 em{font-style:italic;color:var(--accent)}
+.hero-left p{font-size:16px;color:var(--text2);line-height:1.8;max-width:480px;margin-bottom:40px;font-weight:300}
+.hero-actions{display:flex;gap:12px;flex-wrap:wrap}
+.hero-right{background:var(--light);display:flex;flex-direction:column;justify-content:center;align-items:center;padding:80px 64px;gap:16px}
+.acct-card{width:100%;max-width:360px;background:var(--white);border:1px solid var(--border);border-radius:12px;padding:28px;cursor:pointer;transition:all .2s}
+.acct-card:hover{border-color:var(--accent);box-shadow:0 4px 20px rgba(26,58,92,.08)}
+.acct-card-head{display:flex;align-items:center;gap:14px;margin-bottom:12px}
+.acct-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;font-family:'DM Mono',monospace}
+.acct-icon.b{background:var(--acl);color:var(--accent)}.acct-icon.s{background:var(--suppl);color:var(--supp)}
+.acct-card h3{font-size:16px;font-weight:600}
+.acct-card p{font-size:13px;color:var(--text2);line-height:1.6}
+.acct-card-foot{margin-top:16px;text-align:right;font-size:13px;font-weight:600;color:var(--accent)}
+.land-stats{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--border);background:var(--white)}
+.land-stat{padding:28px 48px;border-right:1px solid var(--border)}
+.land-stat:last-child{border-right:none}
+.land-stat-num{font-family:'Playfair Display',serif;font-size:30px;font-weight:700;margin-bottom:4px}
+.land-stat-label{font-size:12px;color:var(--text3);font-weight:500}
+/* AUTH */
+#auth{display:none;min-height:100vh}
+.auth-layout{display:grid;grid-template-columns:1fr 1fr;min-height:100vh}
+.auth-left{background:var(--accent);padding:64px;display:flex;flex-direction:column;justify-content:space-between}
+.auth-left.supp-side{background:var(--supp)}
+.auth-left-logo{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:rgba(255,255,255,.9)}
+.auth-left h2{font-family:'Playfair Display',serif;font-size:36px;font-weight:700;color:#fff;line-height:1.2;margin-bottom:16px}
+.auth-left p{font-size:15px;color:rgba(255,255,255,.65);line-height:1.8}
+.auth-right{padding:64px;display:flex;align-items:center;justify-content:center;background:var(--white)}
+.auth-form{width:100%;max-width:400px}
+.auth-back{font-size:12px;color:var(--text3);cursor:pointer;margin-bottom:40px;display:inline-flex;align-items:center;gap:6px;font-family:'DM Mono',monospace}
+.auth-back:hover{color:var(--text)}
+.auth-form h2{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;margin-bottom:6px}
+.auth-form>p{font-size:13px;color:var(--text2);margin-bottom:32px}
+.f-field{margin-bottom:18px}
+.f-label{display:block;font-size:12px;font-weight:600;color:var(--text2);letter-spacing:.3px;margin-bottom:6px}
+.f-input{width:100%;background:var(--off);border:1.5px solid var(--border);border-radius:8px;padding:11px 14px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);outline:none;transition:all .2s}
+.f-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(26,58,92,.06)}
+.f-input.s:focus{border-color:var(--supp)}
+.auth-switch{text-align:center;margin-top:20px;font-size:13px;color:var(--text3)}
+.auth-switch a{color:var(--accent);cursor:pointer;font-weight:600}
+.auth-err{background:var(--dangerl);color:var(--danger);border:1px solid #f5c6c2;border-radius:6px;padding:10px 14px;font-size:13px;margin-bottom:14px;display:none}
+/* SHELL */
+.shell{display:none;min-height:100vh;flex-direction:column}
+.plat-nav{height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 32px;background:var(--white);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+.plat-logo{font-family:'Playfair Display',serif;font-size:17px;font-weight:700}
+.plat-logo span{color:var(--accent)}
+.plat-nav-left{display:flex;align-items:center;gap:28px}
+.plat-tabs{display:flex;gap:4px}
+.plat-tab{padding:6px 14px;font-size:13px;font-weight:500;color:var(--text2);cursor:pointer;border-radius:6px;transition:all .15s}
+.plat-tab:hover{background:var(--light);color:var(--text)}
+.plat-tab.active{background:var(--acl);color:var(--accent);font-weight:600}
+.plat-tab.active.s{background:var(--suppl);color:var(--supp)}
+.plat-nav-right{display:flex;align-items:center;gap:12px}
+.plat-user{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:500;color:var(--text2)}
+.av{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;font-family:'DM Mono',monospace}
+.av.b{background:var(--acl);color:var(--accent);border:1.5px solid rgba(26,58,92,.2)}
+.av.s{background:var(--suppl);color:var(--supp);border:1.5px solid rgba(45,90,61,.2)}
+/* PAGES */
+.plat-body{flex:1}
+.plat-page{display:none;padding:36px 40px}
+.plat-page.active{display:block}
+.page-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px;padding-bottom:20px;border-bottom:1px solid var(--border2)}
+.page-head h1{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;margin-bottom:4px}
+.page-head p{font-size:13px;color:var(--text3)}
+/* STATS */
+.stats-g{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px}
+.stat-b{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:20px 22px}
+.stat-b-label{font-size:11px;color:var(--text3);font-weight:600;letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px}
+.stat-b-val{font-family:'Playfair Display',serif;font-size:30px;font-weight:700}
+.stat-b-val.blue{color:var(--accent)}.stat-b-val.green{color:var(--supp)}.stat-b-val.gold{color:var(--gold)}
+/* CHAT */
+.chat-wrap{background:var(--white);border:1px solid var(--border);border-radius:10px;overflow:hidden;height:calc(100vh - 260px);display:flex;flex-direction:column}
+.chat-head{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;background:var(--white)}
+.chat-head-info h3{font-size:14px;font-weight:600}
+.chat-head-info p{font-size:12px;color:var(--text3);font-family:'DM Mono',monospace}
+.chat-status{margin-left:auto;display:flex;align-items:center;gap:6px;font-size:11px;font-weight:600}
+.chat-status.b{color:var(--accent)}.chat-status.s{color:var(--supp)}
+.sdot{width:6px;height:6px;border-radius:50%;animation:blink 2s infinite}
+.sdot.b{background:var(--accent)}.sdot.s{background:var(--supp)}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.chat-msgs{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:16px;background:var(--off)}
+.msg-row{display:flex;flex-direction:column;gap:3px}
+.msg-row.r{align-items:flex-end}
+.msg-who{font-size:11px;color:var(--text3);font-family:'DM Mono',monospace}
+.msg-bub{max-width:72%;padding:11px 15px;border-radius:10px;font-size:13px;line-height:1.6}
+.msg-bub.user{background:var(--accent);color:#fff;border-bottom-right-radius:2px}
+.msg-bub.agent{background:var(--white);color:var(--text);border:1px solid var(--border);border-bottom-left-radius:2px}
+.msg-bub.think{background:var(--white);border:1px solid var(--border);color:var(--text3);font-family:'DM Mono',monospace;font-size:12px;display:flex;align-items:center;gap:10px}
+.dots span{display:inline-block;width:5px;height:5px;background:var(--accent);border-radius:50%;animation:db 1.2s infinite}
+.dots span:nth-child(2){animation-delay:.2s}.dots span:nth-child(3){animation-delay:.4s}
+@keyframes db{0%,80%,100%{transform:scale(.8)}40%{transform:scale(1.2)}}
+.chat-foot{padding:14px 16px;border-top:1px solid var(--border);display:flex;gap:10px;background:var(--white)}
+.chat-input{flex:1;background:var(--off);border:1.5px solid var(--border);border-radius:8px;padding:10px 14px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);resize:none;outline:none;transition:border-color .2s}
+.chat-input:focus{border-color:var(--accent)}
+.chat-input.s:focus{border-color:var(--supp)}
+.chat-send{background:var(--accent);color:#fff;border:none;padding:10px 20px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:background .2s;white-space:nowrap}
+.chat-send:hover{background:#1e4a72}
+.chat-send.s{background:var(--supp)}.chat-send.s:hover{background:#1e4a2a}
+.chat-send:disabled{opacity:.5;cursor:not-allowed}
+/* INV */
+.inv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-bottom:24px}
+.inv-card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:20px;border-left:3px solid var(--supp)}
+.inv-part{font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);margin-bottom:6px}
+.inv-price{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;margin-bottom:4px}
+.inv-detail{font-size:12px;color:var(--text3);margin-top:2px}
+.inv-avail{font-size:11px;font-weight:600;margin-top:10px;color:var(--supp)}
+.inv-avail.low{color:var(--danger)}
+/* TABLE */
+.tbl-wrap{background:var(--white);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:20px}
+.tbl-head{padding:16px 20px;border-bottom:1px solid var(--border);font-size:14px;font-weight:600}
+table{width:100%;border-collapse:collapse}
+th{font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);font-weight:600;padding:11px 20px;text-align:left;border-bottom:1px solid var(--border);background:var(--off)}
+td{padding:13px 20px;border-bottom:1px solid var(--border2);font-size:13px}
+tr:last-child td{border-bottom:none}
+tbody tr:hover td{background:var(--off)}
+.tag{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
+.tag.green{background:var(--suppl);color:var(--supp)}.tag.red{background:var(--dangerl);color:var(--danger)}.tag.gold{background:var(--goldl);color:var(--gold)}.tag.blue{background:var(--acl);color:var(--accent)}
+.supp-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+.supp-card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:24px;transition:all .2s}
+.supp-card:hover{border-color:var(--accent);box-shadow:0 2px 12px rgba(26,58,92,.06)}
+.supp-card-tag{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px}
+.supp-card h3{font-size:16px;font-weight:600;margin-bottom:6px}
+.supp-card p{font-size:12px;color:var(--text3);margin-bottom:14px}
+.supp-online{font-size:11px;font-weight:600;color:var(--supp);display:flex;align-items:center;gap:5px}
+.req-list{display:flex;flex-direction:column;gap:10px}
+.req-card{background:var(--white);border:1px solid var(--border);border-radius:8px;padding:16px 20px;display:flex;justify-content:space-between;align-items:center}
+.req-info h4{font-size:14px;font-weight:600;margin-bottom:3px}
+.req-info p{font-size:12px;color:var(--text3);font-family:'DM Mono',monospace}
+.settings-g{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.settings-card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:24px}
+.settings-card h3{font-size:15px;font-weight:600;margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+.info-box{background:var(--suppl);border:1px solid #c5dcc9;border-radius:8px;padding:14px 18px;margin-bottom:20px;font-size:13px;color:var(--supp)}
+.empty{padding:48px;text-align:center;color:var(--text3);font-size:13px;font-family:'DM Mono',monospace}
 </style>
 </head>
 <body>
 
-<!-- ===== LANDING ===== -->
+<!-- LANDING -->
 <div id="landing">
   <nav class="land-nav">
     <div class="land-logo">Aixin<span>chips</span></div>
-    <div class="land-nav-links">
-      <div class="land-nav-link">Platform</div>
-      <div class="land-nav-link">Solutions</div>
-      <div class="land-nav-link">Pricing</div>
-      <div class="land-nav-link">About</div>
-    </div>
     <div class="land-nav-actions">
       <button class="btn btn-outline" onclick="showAuth('customer','login')">Sign In</button>
       <button class="btn btn-primary" onclick="showAuth('customer','signup')">Get Started</button>
     </div>
   </nav>
-
   <div class="land-hero">
     <div class="hero-left">
-      <div class="hero-eyebrow">AI-Powered Procurement Platform</div>
-      <h1>Where Buyer Agents Meet <em>Supplier Agents</em></h1>
+      <div class="hero-eye">AI-Powered Procurement Platform</div>
+      <h1>Where Buyer Agents<br>Meet <em>Supplier Agents</em></h1>
       <p>Aixinchips connects procurement teams with verified electronic component suppliers through autonomous AI agents — negotiating prices, checking availability, and processing orders around the clock.</p>
       <div class="hero-actions">
         <button class="btn btn-primary btn-lg" onclick="showAuth('customer','signup')">I am a Buyer</button>
-        <button class="btn btn-supplier btn-lg" onclick="showAuth('supplier','signup')">I am a Supplier</button>
+        <button class="btn btn-supp btn-lg" onclick="showAuth('supplier','signup')">I am a Supplier</button>
       </div>
     </div>
-
     <div class="hero-right">
-      <div class="account-card" onclick="showAuth('customer','signup')">
-        <div class="account-card-header">
-          <div class="account-icon buyer"></div>
-          <div>
-            <h3>Buyer Account</h3>
-          </div>
-        </div>
-        <p>Tell your AI agent what components you need. It contacts supplier agents, compares quotes, and brings back the best options — automatically.</p>
-        <div class="account-card-footer">Get started as a buyer →</div>
+      <div class="acct-card" onclick="showAuth('customer','signup')">
+        <div class="acct-card-head"><div class="acct-icon b">B</div><h3>Buyer Account</h3></div>
+        <p>Tell your AI agent what components you need. It contacts supplier agents, compares quotes, and brings back the best options automatically.</p>
+        <div class="acct-card-foot">Get started as a buyer</div>
       </div>
-
-      <div class="account-card" onclick="showAuth('supplier','signup')">
-        <div class="account-card-header">
-          <div class="account-icon seller"></div>
-          <div>
-            <h3>Supplier Account</h3>
-          </div>
-        </div>
-        <p>Upload your inventory once. Your AI agent responds to buyer requests 24/7, quotes your prices, and alerts you when orders are confirmed.</p>
-        <div class="account-card-footer" style="color:var(--supplier);">Get started as a supplier →</div>
+      <div class="acct-card" onclick="showAuth('supplier','signup')">
+        <div class="acct-card-head"><div class="acct-icon s">S</div><h3>Supplier Account</h3></div>
+        <p>Tell your agent what you have in stock. It responds to buyer requests 24/7 and alerts you when orders are confirmed.</p>
+        <div class="acct-card-foot" style="color:var(--supp)">Get started as a supplier</div>
       </div>
     </div>
   </div>
-
   <div class="land-stats">
     <div class="land-stat"><div class="land-stat-num">2m</div><div class="land-stat-label">Average response time</div></div>
     <div class="land-stat"><div class="land-stat-num">24/7</div><div class="land-stat-label">Agent availability</div></div>
-    <div class="land-stat"><div class="land-stat-num">100%</div><div class="land-stat-label">Local AI, no cloud</div></div>
+    <div class="land-stat"><div class="land-stat-num">AI</div><div class="land-stat-label">Powered by Claude</div></div>
     <div class="land-stat"><div class="land-stat-num">$0</div><div class="land-stat-label">Per transaction fee</div></div>
   </div>
 </div>
 
-<!-- ===== AUTH ===== -->
+<!-- AUTH -->
 <div id="auth">
   <div class="auth-layout">
-    <div class="auth-left" id="authLeftPanel">
+    <div class="auth-left" id="authPanel">
       <div class="auth-left-logo">Aixinchips</div>
-      <div class="auth-left-content">
-        <h2 id="authLeftTitle">Procurement,<br>Automated.</h2>
-        <p id="authLeftSub">Your AI agent handles supplier negotiations while you focus on what matters.</p>
-      </div>
+      <div><h2 id="authLeftTitle">Procurement,<br>Automated.</h2><p id="authLeftSub">Your AI agent handles supplier negotiations while you focus on what matters.</p></div>
     </div>
     <div class="auth-right">
       <div class="auth-form">
         <div class="auth-back" onclick="showLanding()">← Back to home</div>
         <h2 id="authTitle">Create your account</h2>
-        <p id="authSubtitle">Join the AI procurement network</p>
-
+        <p id="authSub">Join the AI procurement network</p>
+        <div class="auth-err" id="authErr"></div>
         <div id="signupOnly">
-          <div class="form-field">
-            <label class="form-label">Company Name</label>
-            <input class="form-input" id="authCompany" type="text" placeholder="Your company name">
-          </div>
+          <div class="f-field"><label class="f-label">Company Name</label><input class="f-input" id="authCompany" type="text" placeholder="Your company name"></div>
         </div>
-
-        <div class="form-field">
-          <label class="form-label">Email Address</label>
-          <input class="form-input" id="authEmail" type="email" placeholder="you@company.com">
-        </div>
-
-        <div class="form-field">
-          <label class="form-label">Password</label>
-          <input class="form-input" id="authPassword" type="password" placeholder="Create a secure password">
-        </div>
-
+        <div class="f-field"><label class="f-label">Email</label><input class="f-input" id="authEmail" type="email" placeholder="you@company.com"></div>
+        <div class="f-field"><label class="f-label">Password</label><input class="f-input" id="authPassword" type="password" placeholder="Password"></div>
         <button class="btn btn-primary btn-full" id="authBtn" onclick="handleAuth()">Create Account</button>
-
-        <div class="auth-switch" id="authSwitch">
-          Already have an account? <a onclick="toggleMode()">Sign in</a>
-        </div>
-
-        <div class="auth-divider"><span>or try demo</span></div>
-        <button class="btn btn-outline btn-full" id="demoBtn" onclick="demoLogin()" style="margin-top:0;">Sign in with Demo Account</button>
+        <div class="auth-switch" id="authSwitch">Already have an account? <a onclick="toggleMode()">Sign in</a></div>
+        <div style="display:flex;align-items:center;gap:12px;margin:16px 0;"><div style="flex:1;height:1px;background:var(--border)"></div><span style="font-size:12px;color:var(--text3)">or try demo</span><div style="flex:1;height:1px;background:var(--border)"></div></div>
+        <button class="btn btn-outline btn-full" id="demoBtn" onclick="demoLogin()" style="margin-top:0">Demo: TechBuild Electronics</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ===== BUYER PLATFORM ===== -->
-<div id="buyer-shell" class="platform-shell">
+<!-- BUYER SHELL -->
+<div id="buyer-shell" class="shell">
   <nav class="plat-nav">
     <div class="plat-nav-left">
       <div class="plat-logo">Aixin<span>chips</span></div>
-      <div class="plat-nav-tabs">
-        <div class="plat-tab active" onclick="buyerPage('chat')" id="btab-chat">My Agent</div>
-        <div class="plat-tab" onclick="buyerPage('orders')" id="btab-orders">Orders</div>
-        <div class="plat-tab" onclick="buyerPage('suppliers')" id="btab-suppliers">Suppliers</div>
-        <div class="plat-tab" onclick="buyerPage('settings')" id="btab-settings">Settings</div>
+      <div class="plat-tabs">
+        <div class="plat-tab active" onclick="bPage('chat')" id="bt-chat">My Agent</div>
+        <div class="plat-tab" onclick="bPage('orders')" id="bt-orders">Orders</div>
+        <div class="plat-tab" onclick="bPage('suppliers')" id="bt-suppliers">Suppliers</div>
+        <div class="plat-tab" onclick="bPage('settings')" id="bt-settings">Settings</div>
       </div>
     </div>
     <div class="plat-nav-right">
-      <div class="plat-user">
-        <div class="plat-avatar buyer" id="buyerAvatar">B</div>
-        <span id="buyerName">Buyer</span>
-      </div>
+      <div class="plat-user"><div class="av b" id="bAv">B</div><span id="bName">Buyer</span></div>
       <button class="btn btn-outline btn-sm" onclick="logout()">Sign out</button>
     </div>
   </nav>
-
   <div class="plat-body">
-
-    <!-- Chat -->
-    <div class="plat-page active" id="buyer-chat">
-      <div class="plat-page-head">
-        <div>
-          <h1>Procurement Agent</h1>
-          <p>Your AI agent is connected to the supplier network</p>
-        </div>
-      </div>
+    <div class="plat-page active" id="b-chat">
+      <div class="page-head"><div><h1>Procurement Agent</h1><p>Your AI agent is connected to the supplier network</p></div></div>
       <div class="chat-wrap">
         <div class="chat-head">
-          <div class="plat-avatar buyer" id="buyerChatAvatar">B</div>
-          <div class="chat-head-info">
-            <h3 id="buyerAgentName">Your Agent</h3>
-            <p>AI Procurement Agent · Supplier Network Active</p>
-          </div>
-          <div class="chat-status"><div class="status-dot blue"></div>Online</div>
+          <div class="av b" id="bChatAv">B</div>
+          <div class="chat-head-info"><h3 id="bAgentName">Your Agent</h3><p>AI Procurement Agent · Supplier Network Active</p></div>
+          <div class="chat-status b"><div class="sdot b"></div>Online</div>
         </div>
-        <div class="chat-msgs" id="buyerMsgs">
-          <div class="msg-row">
-            <div class="msg-who">Agent</div>
-            <div class="msg-bub agent" id="buyerWelcomeMsg">Good morning. I am your procurement agent. Tell me what electronic components you need and I will contact supplier agents on the platform to get you the best quotes.</div>
-          </div>
+        <div class="chat-msgs" id="bMsgs">
+          <div class="msg-row"><div class="msg-who">Agent</div><div class="msg-bub agent" id="bWelcome">Good day. I am your procurement agent. Tell me what electronic components you need and I will contact supplier agents on the platform to find the best available pricing.</div></div>
         </div>
         <div class="chat-foot">
-          <textarea class="chat-input" id="buyerInput" placeholder="e.g. I need 500 ESP32-WROOM-32E chips by end of month..." rows="1"></textarea>
-          <button class="chat-send" id="buyerSendBtn" onclick="buyerSend()">Send</button>
+          <textarea class="chat-input" id="bInput" placeholder="e.g. I need 500 ESP32-WROOM-32E chips by end of month..." rows="1"></textarea>
+          <button class="chat-send" id="bSendBtn" onclick="buyerSend()">Send</button>
         </div>
       </div>
     </div>
-
-    <!-- Orders -->
-    <div class="plat-page" id="buyer-orders">
-      <div class="plat-page-head">
-        <div><h1>My Orders</h1><p>Procurement requests and quotes received</p></div>
-      </div>
-      <div class="data-table-wrap">
-        <div class="data-table-head"><h3>Active Requests</h3></div>
-        <div id="buyerOrdersBody">
-          <div class="empty-state">No orders yet. Use your agent to request quotes.</div>
-        </div>
+    <div class="plat-page" id="b-orders">
+      <div class="page-head"><div><h1>My Orders</h1><p>Procurement requests and quotes received</p></div></div>
+      <div class="tbl-wrap"><div class="tbl-head">Order History</div><div id="bOrdersBody"><div class="empty">No orders yet. Use your agent to request quotes.</div></div></div>
+    </div>
+    <div class="plat-page" id="b-suppliers">
+      <div class="page-head"><div><h1>Active Suppliers</h1><p>Verified suppliers with agents on the platform</p></div></div>
+      <div class="supp-cards" id="bSuppCards"></div>
+    </div>
+    <div class="plat-page" id="b-settings">
+      <div class="page-head"><div><h1>Account Settings</h1></div></div>
+      <div class="settings-g">
+        <div class="settings-card"><h3>Profile</h3><div style="margin-bottom:12px;"><div class="f-label" style="margin-bottom:4px;">Company</div><div id="bsComp" style="font-size:15px;font-weight:600;"></div></div><div style="margin-bottom:12px;"><div class="f-label" style="margin-bottom:4px;">Email</div><div id="bsEmail" style="font-size:13px;font-family:'DM Mono',monospace;color:var(--text2);"></div></div><div><div class="f-label" style="margin-bottom:4px;">Account Type</div><div style="font-size:13px;font-weight:600;color:var(--accent);">Buyer Account</div></div></div>
       </div>
     </div>
-
-    <!-- Suppliers -->
-    <div class="plat-page" id="buyer-suppliers">
-      <div class="plat-page-head">
-        <div><h1>Active Suppliers</h1><p>Verified suppliers with agents on the platform</p></div>
-      </div>
-      <div class="supplier-cards" id="buyerSupplierCards">
-        <div class="empty-state">No suppliers on platform yet.</div>
-      </div>
-    </div>
-
-    <!-- Settings -->
-    <div class="plat-page" id="buyer-settings">
-      <div class="plat-page-head"><div><h1>Account Settings</h1></div></div>
-      <div class="settings-grid">
-        <div class="settings-card">
-          <h3>Profile</h3>
-          <div class="form-field"><label class="form-label">Company Name</label><div id="bsCompany" style="font-size:15px;font-weight:600;"></div></div>
-          <div class="form-field" style="margin-top:14px;"><label class="form-label">Email</label><div id="bsEmail" style="font-size:13px;font-family:'DM Mono',monospace;color:var(--text-2);"></div></div>
-          <div style="margin-top:14px;"><label class="form-label">Account Type</label><div style="font-size:13px;font-weight:600;color:var(--accent);">Buyer Account</div></div>
-        </div>
-        <div class="settings-card">
-          <h3>Agent Preferences</h3>
-          <div class="form-field"><label class="form-label">Auto-approve quotes under</label><input class="form-input" type="text" placeholder="$500" value="$500"></div>
-          <div class="form-field" style="margin-top:12px;"><label class="form-label">Preferred lead time</label><input class="form-input" type="text" placeholder="3-5 days" value="3-5 days"></div>
-        </div>
-      </div>
-    </div>
-
   </div>
 </div>
 
-<!-- ===== SUPPLIER PLATFORM ===== -->
-<div id="supplier-shell" class="platform-shell">
+<!-- SUPPLIER SHELL -->
+<div id="supplier-shell" class="shell">
   <nav class="plat-nav">
     <div class="plat-nav-left">
       <div class="plat-logo">Aixin<span>chips</span></div>
-      <div class="plat-nav-tabs">
-        <div class="plat-tab active supplier" onclick="supplierPage('inventory')" id="stab-inventory">Inventory</div>
-        <div class="plat-tab" onclick="supplierPage('requests')" id="stab-requests">Requests</div>
-        <div class="plat-tab" onclick="supplierPage('agent')" id="stab-agent">Agent Activity</div>
-        <div class="plat-tab" onclick="supplierPage('analytics')" id="stab-analytics">Analytics</div>
-        <div class="plat-tab" onclick="supplierPage('settings')" id="stab-settings">Settings</div>
+      <div class="plat-tabs">
+        <div class="plat-tab active s" onclick="sPage('agent')" id="st-agent">My Agent</div>
+        <div class="plat-tab" onclick="sPage('inventory')" id="st-inventory">Inventory</div>
+        <div class="plat-tab" onclick="sPage('requests')" id="st-requests">Requests</div>
+        <div class="plat-tab" onclick="sPage('analytics')" id="st-analytics">Analytics</div>
+        <div class="plat-tab" onclick="sPage('settings')" id="st-settings">Settings</div>
       </div>
     </div>
     <div class="plat-nav-right">
-      <div class="plat-user">
-        <div class="plat-avatar seller" id="supplierAvatar">S</div>
-        <span id="supplierName">Supplier</span>
-      </div>
+      <div class="plat-user"><div class="av s" id="sAv">S</div><span id="sName">Supplier</span></div>
       <button class="btn btn-outline btn-sm" onclick="logout()">Sign out</button>
     </div>
   </nav>
-
   <div class="plat-body">
-
-    <!-- Inventory -->
-    <div class="plat-page active" id="supplier-inventory">
-      <div class="plat-page-head">
-        <div><h1>My Inventory</h1><p>Your agent quotes these prices to buyer agents automatically</p></div>
-      </div>
-      <div class="stats-grid">
-        <div class="stat-box"><div class="stat-box-label">Total Parts</div><div class="stat-box-val blue" id="sTotalParts">0</div></div>
-        <div class="stat-box"><div class="stat-box-label">Total Units</div><div class="stat-box-val green" id="sTotalUnits">0</div></div>
-        <div class="stat-box"><div class="stat-box-label">Requests Today</div><div class="stat-box-val gold" id="sReqToday">0</div></div>
-        <div class="stat-box"><div class="stat-box-label">Agent Status</div><div class="stat-box-val green" style="font-size:16px;margin-top:4px;">Active</div></div>
-      </div>
-      <div class="inv-grid" id="suppInvGrid">
-        <div class="empty-state" style="grid-column:1/-1;">No inventory yet. Tell your agent what you have in stock.</div>
-      </div>
-    </div>
-
-    <!-- Add Parts -->
-    <div class="plat-page" id="supplier-add">
-      <div class="plat-page-head">
-        <div><h1>Add to Inventory</h1><p>Your agent will quote these prices to buyers</p></div>
-        <button class="btn btn-outline" onclick="supplierPage('inventory')">← Back</button>
-      </div>
-      <div class="form-card">
-        <h3>Part Details</h3>
-        <div class="form-grid">
-          <div class="fg"><div class="fg-label">Part Number</div><input class="fg-input" id="nPart" placeholder="e.g. ESP32-WROOM-32E"></div>
-          <div class="fg"><div class="fg-label">Unit Price (USD)</div><input class="fg-input" id="nPrice" type="number" step="0.01" placeholder="2.80"></div>
-          <div class="fg"><div class="fg-label">Stock Quantity</div><input class="fg-input" id="nStock" type="number" placeholder="1000"></div>
-        </div>
-        <div class="form-grid">
-          <div class="fg"><div class="fg-label">Min. Order Qty</div><input class="fg-input" id="nMOQ" type="number" placeholder="10"></div>
-          <div class="fg"><div class="fg-label">Lead Time</div><input class="fg-input" id="nLead" placeholder="3-5 business days"></div>
-          <div class="fg"><div class="fg-label">Description</div><input class="fg-input" id="nDesc" placeholder="Brief description"></div>
-        </div>
-        <button class="btn btn-supplier" onclick="addPart()">Add to Inventory</button>
-      </div>
-    </div>
-
-    <!-- Requests -->
-    <div class="plat-page" id="supplier-requests">
-      <div class="plat-page-head"><div><h1>Incoming Requests</h1><p>Buyer agents that contacted your agent</p></div></div>
-      <div class="req-list" id="suppReqList"><div class="empty-state">No requests yet.</div></div>
-    </div>
-
-    <!-- Agent Activity -->
-    <div class="plat-page" id="supplier-agent">
-      <div class="plat-page-head">
-        <div><h1>Talk to Your Agent</h1><p>Tell your agent what you have in stock — it will remember and respond to buyers automatically</p></div>
-      </div>
-      <div style="background:var(--accent-light);border:1px solid #c5d8ec;border-radius:8px;padding:14px 18px;margin-bottom:20px;font-size:13px;color:var(--accent);">
-        <strong>How to update your inventory:</strong> Just tell your agent in plain language. For example: "I have 2000 ESP32-WROOM-32E in stock at $2.80 each, MOQ 10, lead time 3-5 days" or "We are out of Raspberry Pi 4B 2GB" or "Update DHT22 price to $1.20".
-      </div>
+    <div class="plat-page active" id="s-agent">
+      <div class="page-head"><div><h1>Talk to Your Agent</h1><p>Tell your agent what you have in stock — it will respond to buyers automatically</p></div></div>
+      <div class="info-box">Tell your agent what parts you stock. Example: "I have 2000 ESP32-WROOM-32E at $2.80 each, lead time 3-5 days". Your agent uses this to respond to buyer requests automatically. You can update prices or mark items out of stock at any time.</div>
       <div class="chat-wrap">
         <div class="chat-head">
-          <div class="plat-avatar seller" id="suppChatAvatar">S</div>
-          <div class="chat-head-info">
-            <h3 id="suppAgentName">Supplier Agent</h3>
-            <p>Listening for inventory updates · Auto-quoting to buyers</p>
-          </div>
-          <div class="chat-status"><div class="status-dot"></div>Active</div>
+          <div class="av s" id="sChatAv">S</div>
+          <div class="chat-head-info"><h3 id="sAgentName">Supplier Agent</h3><p>Listening for buyer requests · Auto-quoting</p></div>
+          <div class="chat-status s"><div class="sdot s"></div>Active</div>
         </div>
-        <div class="chat-msgs" id="suppActivityLog">
-          <div class="msg-row">
-            <div class="msg-who">Agent</div>
-            <div class="msg-bub agent">Hello! I am your supplier agent. Tell me what components you have in stock and I will remember them and quote buyers automatically.<br><br>You can say things like:<br>• "I have 500 ESP32-WROOM-32E at $2.80 each, lead time 3-5 days"<br>• "Add 1000 STM32F103C8T6 at $2.90, MOQ 50"<br>• "We are out of Raspberry Pi 4B"<br>• "Update ESP32 price to $2.60"</div>
-          </div>
+        <div class="chat-msgs" id="sMsgs">
+          <div class="msg-row"><div class="msg-who">Agent</div><div class="msg-bub agent">Hello. I am your supplier agent. Tell me what components you have in stock and I will respond to buyer requests automatically.<br><br>You can say things like:<br>• "I have 500 ESP32-WROOM-32E at $2.80 each, lead time 3-5 days"<br>• "Add 1000 STM32F103C8T6 at $2.90, MOQ 50"<br>• "Out of stock: Raspberry Pi 4B"<br>• "Update ESP32 price to $2.60"<br>• "Show my inventory"</div></div>
         </div>
         <div class="chat-foot">
-          <textarea class="chat-input supp" id="suppInput" placeholder="e.g. I have 2000 ESP32-WROOM-32E at $2.80 each, lead time 3-5 days..." rows="1"></textarea>
-          <button class="chat-send supp" onclick="suppChat()">Send</button>
+          <textarea class="chat-input s" id="sInput" placeholder="Tell your agent what you have in stock..." rows="1"></textarea>
+          <button class="chat-send s" onclick="suppSend()">Send</button>
         </div>
       </div>
     </div>
-
-    <!-- Analytics -->
-    <div class="plat-page" id="supplier-analytics">
-      <div class="plat-page-head"><div><h1>Analytics</h1><p>Agent performance overview</p></div></div>
-      <div class="stats-grid">
-        <div class="stat-box"><div class="stat-box-label">Total Requests</div><div class="stat-box-val blue" id="anaTot">0</div></div>
-        <div class="stat-box"><div class="stat-box-label">Responded</div><div class="stat-box-val green" id="anaResp">0</div></div>
-        <div class="stat-box"><div class="stat-box-label">Out of Stock</div><div class="stat-box-val" style="color:var(--danger);" id="anaOOS2">0</div></div>
-        <div class="stat-box"><div class="stat-box-label">Est. Revenue</div><div class="stat-box-val gold" id="anaRev">$0</div></div>
+    <div class="plat-page" id="s-inventory">
+      <div class="page-head"><div><h1>My Inventory</h1><p>Updated via your agent</p></div></div>
+      <div class="stats-g">
+        <div class="stat-b"><div class="stat-b-label">Total Parts</div><div class="stat-b-val blue" id="sTotP">0</div></div>
+        <div class="stat-b"><div class="stat-b-label">Total Units</div><div class="stat-b-val green" id="sTotU">0</div></div>
+        <div class="stat-b"><div class="stat-b-label">Requests</div><div class="stat-b-val gold" id="sTotR">0</div></div>
+        <div class="stat-b"><div class="stat-b-label">Agent Status</div><div class="stat-b-val green" style="font-size:16px;margin-top:4px;">Active</div></div>
       </div>
-      <div class="data-table-wrap">
-        <div class="data-table-head"><h3>Requests by Component</h3></div>
-        <div id="anaTableBody"><div class="empty-state">No data yet.</div></div>
+      <div class="inv-grid" id="sInvGrid"><div class="empty" style="grid-column:1/-1;">No inventory yet. Go to My Agent and tell it what you have in stock.</div></div>
+    </div>
+    <div class="plat-page" id="s-requests">
+      <div class="page-head"><div><h1>Incoming Requests</h1><p>Buyer agents that contacted your agent</p></div></div>
+      <div class="req-list" id="sReqList"><div class="empty">No requests yet.</div></div>
+    </div>
+    <div class="plat-page" id="s-analytics">
+      <div class="page-head"><div><h1>Analytics</h1></div></div>
+      <div class="stats-g">
+        <div class="stat-b"><div class="stat-b-label">Total Requests</div><div class="stat-b-val blue" id="anaTot">0</div></div>
+        <div class="stat-b"><div class="stat-b-label">Responded</div><div class="stat-b-val green" id="anaResp">0</div></div>
+        <div class="stat-b"><div class="stat-b-label">Out of Stock</div><div class="stat-b-val" style="color:var(--danger)" id="anaOOS">0</div></div>
+        <div class="stat-b"><div class="stat-b-label">Est. Revenue</div><div class="stat-b-val gold" id="anaRev">$0</div></div>
       </div>
     </div>
-
-    <!-- Settings -->
-    <div class="plat-page" id="supplier-settings">
-      <div class="plat-page-head"><div><h1>Account Settings</h1></div></div>
-      <div class="settings-grid">
-        <div class="settings-card">
-          <h3>Company Profile</h3>
-          <div class="form-field"><label class="form-label">Company Name</label><div id="ssCompany" style="font-size:15px;font-weight:600;"></div></div>
-          <div class="form-field" style="margin-top:14px;"><label class="form-label">Email</label><div id="ssEmail" style="font-size:13px;font-family:'DM Mono',monospace;color:var(--text-2);"></div></div>
-          <div style="margin-top:14px;"><label class="form-label">Account Type</label><div style="font-size:13px;font-weight:600;color:var(--supplier);">Supplier Account</div></div>
-        </div>
-        <div class="settings-card">
-          <h3>Agent Settings</h3>
-          <div class="form-field"><label class="form-label">Default Lead Time</label><input class="form-input" type="text" value="3-5 business days"></div>
-          <div class="form-field" style="margin-top:12px;"><label class="form-label">Auto-reply to requests</label>
-            <select class="form-input" style="cursor:pointer;"><option>Always (recommended)</option><option>Only if in stock</option><option>Manual approval</option></select>
-          </div>
-        </div>
+    <div class="plat-page" id="s-settings">
+      <div class="page-head"><div><h1>Account Settings</h1></div></div>
+      <div class="settings-g">
+        <div class="settings-card"><h3>Company Profile</h3><div style="margin-bottom:12px;"><div class="f-label" style="margin-bottom:4px;">Company</div><div id="ssComp" style="font-size:15px;font-weight:600;"></div></div><div><div class="f-label" style="margin-bottom:4px;">Email</div><div id="ssEmail" style="font-size:13px;font-family:'DM Mono',monospace;color:var(--text2);"></div></div><div style="margin-top:14px;"><div class="f-label" style="margin-bottom:4px;">Account Type</div><div style="font-size:13px;font-weight:600;color:var(--supp);">Supplier Account</div></div></div>
       </div>
     </div>
-
   </div>
 </div>
 
 <script>
-// ===== DATA =====
+// ===== SHARED PLATFORM STATE =====
+// This is shared between all users in the same browser session
+// In production this would be a database
+const platform = {
+  users: [
+    { id: 1, type: 'customer', company: 'TechBuild Electronics', email: 'buyer@techbuild.com', password: 'demo123' },
+    { id: 2, type: 'supplier', company: 'Nexwah Components', email: 'supplier@nexwah.com', password: 'demo123' },
+    { id: 3, type: 'supplier', company: 'Delta Electronics', email: 'supplier@delta.com', password: 'demo123' }
+  ],
+  inventory: {
+    2: [
+      { part: 'ESP32-WROOM-32E', price: 2.80, stock: 2500, moq: 10, lead: '3-5 days' },
+      { part: 'STM32F103C8T6', price: 2.90, stock: 3000, moq: 50, lead: '3-5 days' },
+      { part: 'ATMEGA328P-PU', price: 2.10, stock: 4000, moq: 50, lead: '3-5 days' },
+      { part: 'Raspberry Pi 4B 2GB', price: 50.00, stock: 3, moq: 1, lead: '7-10 days' },
+      { part: 'DHT22', price: 1.50, stock: 2000, moq: 10, lead: '3-5 days' }
+    ],
+    3: [
+      { part: 'ESP32-S3-WROOM-1', price: 3.50, stock: 800, moq: 10, lead: '5-7 days' },
+      { part: 'RP2040', price: 1.40, stock: 5000, moq: 100, lead: '3-5 days' },
+      { part: 'BMP280', price: 0.80, stock: 3000, moq: 20, lead: '2-3 days' }
+    ]
+  },
+  orders: [],
+  requests: []
+};
+
 let currentUser = null;
 let userType = 'customer';
 let authMode = 'signup';
 
-const db = {
-  users: [
-    { id: 1, type: 'customer', company: 'TechBuild Electronics', email: 'buyer@techbuild.com', password: 'demo123', avatar: 'T' },
-    { id: 2, type: 'supplier', company: 'Nexwah Components', email: 'supplier@nexwah.com', password: 'demo123', avatar: 'N' },
-    { id: 3, type: 'supplier', company: 'Delta Electronics', email: 'supplier@delta.com', password: 'demo123', avatar: 'D' },
-    { id: 4, type: 'supplier', company: 'Pacific Components', email: 'supplier@pacific.com', password: 'demo123', avatar: 'P' }
-  ],
-  inventory: {
-    2: [
-      { part: 'ESP32-WROOM-32E', price: 2.80, stock: 2500, moq: 10, lead: '3-5 days', desc: 'Wi-Fi + Bluetooth Module' },
-      { part: 'STM32F103C8T6', price: 2.90, stock: 3000, moq: 50, lead: '3-5 days', desc: 'ARM Cortex-M3 MCU' },
-      { part: 'ATMEGA328P-PU', price: 2.10, stock: 4000, moq: 50, lead: '3-5 days', desc: '8-bit AVR Microcontroller' },
-      { part: 'Raspberry Pi 4B 2GB', price: 50.00, stock: 3, moq: 1, lead: '7-10 days', desc: 'Single Board Computer' },
-      { part: 'DHT22', price: 1.50, stock: 2000, moq: 10, lead: '3-5 days', desc: 'Temperature & Humidity Sensor' }
-    ],
-    3: [
-      { part: 'ESP32-S3-WROOM-1', price: 3.50, stock: 600, moq: 10, lead: '5-7 days', desc: 'ESP32-S3 AI Module' },
-      { part: 'RP2040', price: 1.40, stock: 5000, moq: 100, lead: '3-5 days', desc: 'Raspberry Pi Dual-core MCU' },
-      { part: 'nRF24L01+', price: 1.90, stock: 2000, moq: 10, lead: '3-5 days', desc: '2.4GHz RF Transceiver' },
-      { part: 'HC-SR04', price: 0.90, stock: 3000, moq: 10, lead: '2-3 days', desc: 'Ultrasonic Distance Sensor' }
-    ],
-    4: [
-      { part: 'ESP32-C3-MINI-1', price: 1.80, stock: 1200, moq: 20, lead: '4-6 days', desc: 'Low Power Wi-Fi Module' },
-      { part: 'STM32F401CCU6', price: 3.80, stock: 1500, moq: 25, lead: '5-7 days', desc: 'ARM Cortex-M4 MCU' },
-      { part: 'BMP280', price: 0.80, stock: 4000, moq: 20, lead: '2-3 days', desc: 'Barometric Pressure Sensor' },
-      { part: 'SIM800L', price: 5.80, stock: 400, moq: 5, lead: '7-10 days', desc: 'GSM/GPRS Module' }
-    ]
-  },
-  requests: [],
-  orders: []
-};
+// ===== CLAUDE API =====
+async function callClaude(systemPrompt, userMessage) {
+  const response = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 1000,
+      system: systemPrompt,
+      messages: [{ role: 'user', content: userMessage }]
+    })
+  });
+  const data = await response.json();
+  return data.content[0].text;
+}
 
-// ===== NAVIGATION =====
+// ===== LANDING =====
 function showLanding() {
-  hide(['auth','buyer-shell','supplier-shell']);
-  document.getElementById('landing').style.display = 'flex';
+  ['auth','buyer-shell','supplier-shell'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.style.display = 'none'; el.style.flexDirection = ''; }
+  });
+  document.getElementById('landing').style.cssText = 'display:flex;flex-direction:column;';
 }
 
 function showAuth(type, mode) {
   userType = type; authMode = mode;
   document.getElementById('landing').style.display = 'none';
   document.getElementById('auth').style.display = 'block';
-  const isSupplier = type === 'supplier';
-  const panel = document.getElementById('authLeftPanel');
-  panel.className = 'auth-left' + (isSupplier ? ' supplier-side' : '');
-  document.getElementById('authLeftTitle').textContent = isSupplier ? 'Sell Smarter,\nAutomate.' : 'Procurement,\nAutomated.';
-  document.getElementById('authLeftSub').textContent = isSupplier
-    ? 'Your agent handles buyer inquiries 24/7 from your inventory catalogue.'
+  const isSupp = type === 'supplier';
+  document.getElementById('authPanel').className = 'auth-left' + (isSupp ? ' supp-side' : '');
+  document.getElementById('authLeftTitle').textContent = isSupp ? 'Sell Smarter.' : 'Procurement,\nAutomated.';
+  document.getElementById('authLeftSub').textContent = isSupp
+    ? 'Tell your agent what you have. It handles buyer inquiries 24/7.'
     : 'Your agent negotiates with suppliers while you focus on your business.';
   const isLogin = mode === 'login';
   document.getElementById('authTitle').textContent = isLogin ? 'Welcome back' : 'Create your account';
-  document.getElementById('authSubtitle').textContent = isLogin ? 'Sign in to your account' : (isSupplier ? 'Join as a supplier' : 'Join as a buyer');
+  document.getElementById('authSub').textContent = isLogin ? 'Sign in to continue' : (isSupp ? 'Join as a supplier' : 'Join as a buyer');
   document.getElementById('signupOnly').style.display = isLogin ? 'none' : 'block';
   document.getElementById('authBtn').textContent = isLogin ? 'Sign In' : 'Create Account';
-  document.getElementById('authBtn').className = 'btn btn-full ' + (isSupplier ? 'btn-supplier' : 'btn-primary');
+  document.getElementById('authBtn').className = 'btn btn-full ' + (isSupp ? 'btn-supp' : 'btn-primary');
   document.getElementById('authSwitch').innerHTML = isLogin
     ? 'No account? <a onclick="toggleMode()">Sign up</a>'
     : 'Already have an account? <a onclick="toggleMode()">Sign in</a>';
-  document.getElementById('demoBtn').textContent = isSupplier ? 'Demo: Nexwah Components' : 'Demo: TechBuild Electronics';
+  document.getElementById('demoBtn').textContent = isSupp ? 'Demo: Nexwah Components' : 'Demo: TechBuild Electronics';
+  document.getElementById('authErr').style.display = 'none';
 }
 
 function toggleMode() { showAuth(userType, authMode === 'login' ? 'signup' : 'login'); }
 
 function demoLogin() {
-  if (userType === 'customer') loginUser(db.users[0]);
-  else loginUser(db.users[1]);
+  loginUser(userType === 'customer' ? platform.users[0] : platform.users[1]);
 }
 
 function handleAuth() {
-  const email = document.getElementById('authEmail').value || 'new@company.com';
-  const pw = document.getElementById('authPassword').value || 'pass';
-  const company = document.getElementById('authCompany') ? document.getElementById('authCompany').value || email.split('@')[0] : '';
-
+  const email = document.getElementById('authEmail').value.trim();
+  const pw = document.getElementById('authPassword').value;
+  const company = document.getElementById('authCompany') ? document.getElementById('authCompany').value.trim() : '';
+  if (!email) { showErr('Please enter your email.'); return; }
   if (authMode === 'login') {
-    const found = db.users.find(u => u.email === email && u.type === userType);
-    loginUser(found || { id: Date.now(), type: userType, company: email.split('@')[1] || 'Company', email, avatar: email[0].toUpperCase() });
+    const u = platform.users.find(u => u.email === email && u.password === pw && u.type === userType);
+    if (u) loginUser(u);
+    else showErr('Invalid email or password.');
   } else {
-    const u = { id: Date.now(), type: userType, company: company || email.split('@')[0], email, password: pw, avatar: (company || email)[0].toUpperCase() };
-    db.users.push(u);
-    if (userType === 'supplier') db.inventory[u.id] = [];
+    if (!company) { showErr('Please enter your company name.'); return; }
+    const u = { id: Date.now(), type: userType, company, email, password: pw };
+    platform.users.push(u);
+    if (userType === 'supplier') platform.inventory[u.id] = [];
     loginUser(u);
   }
+}
+
+function showErr(msg) {
+  const el = document.getElementById('authErr');
+  el.textContent = msg; el.style.display = 'block';
 }
 
 function loginUser(user) {
   currentUser = user;
   document.getElementById('auth').style.display = 'none';
   if (user.type === 'customer') {
-    document.getElementById('buyer-shell').style.display = 'flex';
-    document.getElementById('buyerAvatar').textContent = user.avatar;
-    document.getElementById('buyerName').textContent = user.company;
-    document.getElementById('buyerChatAvatar').textContent = user.avatar;
-    document.getElementById('buyerAgentName').textContent = user.company + ' Procurement Agent';
-    document.getElementById('buyerWelcomeMsg').textContent = 'Good day. I am your procurement agent for ' + user.company + '. Tell me what electronic components you need and I will contact supplier agents on the platform to find you the best available pricing.';
-    document.getElementById('bsCompany').textContent = user.company;
+    const s = document.getElementById('buyer-shell');
+    s.style.cssText = 'display:flex;flex-direction:column;';
+    document.getElementById('bAv').textContent = user.company[0];
+    document.getElementById('bName').textContent = user.company;
+    document.getElementById('bChatAv').textContent = user.company[0];
+    document.getElementById('bAgentName').textContent = user.company + ' Procurement Agent';
+    document.getElementById('bWelcome').textContent = 'Good day. I am your procurement agent for ' + user.company + '. Tell me what electronic components you need and I will contact all supplier agents on the platform to find you the best available pricing.';
+    document.getElementById('bsComp').textContent = user.company;
     document.getElementById('bsEmail').textContent = user.email;
-    loadBuyerSuppliers();
+    renderBuyerSuppliers();
   } else {
-    document.getElementById('supplier-shell').style.display = 'flex';
-    document.getElementById('supplierAvatar').textContent = user.avatar;
-    document.getElementById('supplierName').textContent = user.company;
-    document.getElementById('suppChatAvatar').textContent = user.avatar;
-    document.getElementById('suppAgentName').textContent = user.company + ' Supplier Agent';
-    document.getElementById('ssCompany').textContent = user.company;
+    const s = document.getElementById('supplier-shell');
+    s.style.cssText = 'display:flex;flex-direction:column;';
+    document.getElementById('sAv').textContent = user.company[0];
+    document.getElementById('sName').textContent = user.company;
+    document.getElementById('sChatAv').textContent = user.company[0];
+    document.getElementById('sAgentName').textContent = user.company + ' Agent';
+    document.getElementById('ssComp').textContent = user.company;
     document.getElementById('ssEmail').textContent = user.email;
-    renderInv();
+    renderSuppInv();
   }
 }
 
 function logout() {
   currentUser = null;
-  hide(['buyer-shell','supplier-shell']);
+  ['buyer-shell','supplier-shell'].forEach(id => {
+    const el = document.getElementById(id);
+    el.style.display = 'none'; el.style.flexDirection = '';
+  });
   showLanding();
 }
 
-function hide(ids) { ids.forEach(id => { const el = document.getElementById(id); if(el) el.style.display = 'none'; }); }
-
 // ===== BUYER PAGES =====
-function buyerPage(p) {
+function bPage(p) {
   document.querySelectorAll('#buyer-shell .plat-page').forEach(el => el.classList.remove('active'));
   document.querySelectorAll('#buyer-shell .plat-tab').forEach(el => el.classList.remove('active'));
-  document.getElementById('buyer-' + p).classList.add('active');
-  const tab = document.getElementById('btab-' + p);
+  document.getElementById('b-' + p).classList.add('active');
+  const tab = document.getElementById('bt-' + p);
   if (tab) tab.classList.add('active');
-  if (p === 'suppliers') loadBuyerSuppliers();
-  if (p === 'orders') renderBuyerOrders();
+  if (p === 'orders') renderOrders();
+  if (p === 'suppliers') renderBuyerSuppliers();
 }
 
 async function buyerSend() {
-  const input = document.getElementById('buyerInput');
+  const input = document.getElementById('bInput');
   const msg = input.value.trim();
   if (!msg) return;
   input.value = '';
-  addBuyerMsg(msg, 'user');
-  document.getElementById('buyerSendBtn').disabled = true;
+  addMsg('bMsgs', msg, 'user', currentUser.company);
+  document.getElementById('bSendBtn').disabled = true;
 
-  const tid = 'think-' + Date.now();
-  const msgs = document.getElementById('buyerMsgs');
-  msgs.innerHTML += `<div class="msg-row" id="${tid}"><div class="msg-who">Agent</div><div class="msg-bub thinking">Contacting supplier agents on Laptop B <span class="dots"><span></span><span></span><span></span></span></div></div>`;
-  msgs.scrollTop = msgs.scrollHeight;
+  const tid = addThinking('bMsgs', 'Contacting supplier agents');
 
-  let reply = '';
-  let source = 'simulated';
+  // Build supplier inventory context
+  const suppContext = platform.users
+    .filter(u => u.type === 'supplier')
+    .map(s => {
+      const inv = platform.inventory[s.id] || [];
+      if (!inv.length) return null;
+      return `Supplier: ${s.company}\nInventory:\n${inv.map(i => `  - ${i.part}: $${i.price}/unit, ${i.stock} units in stock, MOQ ${i.moq}, lead time ${i.lead}${i.stock === 0 ? ' (OUT OF STOCK)' : ''}`).join('\n')}`;
+    })
+    .filter(Boolean)
+    .join('\n\n');
+
+  const systemPrompt = `You are a professional AI procurement agent for ${currentUser.company}. 
+
+You have access to the following supplier network on the Aixinchips platform:
+
+${suppContext || 'No suppliers currently active on the platform.'}
+
+Your job:
+1. When the buyer asks for components, check which suppliers have the item in stock
+2. Contact all relevant supplier agents and compile their quotes
+3. Present a clear comparison showing: supplier name, unit price, total cost, stock availability, lead time
+4. Recommend the best option based on price and availability
+5. Ask the buyer to reply "confirm" to place the order
+
+If the buyer says "confirm", generate an order reference (e.g. ORD-XXXXXX) and confirm the order.
+
+Keep responses professional and concise. Format quotes clearly with line breaks.`;
 
   try {
-    const res = await fetch('http://localhost:3001/api/chat', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: msg })
-    });
-    if (res.ok) {
-      const data = await res.json();
-      reply = data.reply;
-      source = 'real';
-    } else {
-      reply = genBuyerReply(msg);
+    const reply = await callClaude(systemPrompt, msg);
+    removeThing(tid);
+    addMsg('bMsgs', reply, 'agent', 'Agent');
+
+    if (msg.toLowerCase().match(/need|want|order|require|looking for/)) {
+      platform.orders.push({ id: Date.now(), userId: currentUser.id, company: currentUser.company, message: msg, reply, time: new Date().toLocaleString(), status: 'Quote Received' });
+      // Log request to supplier
+      platform.requests.push({ id: Date.now(), sid: 2, customer: currentUser.company, part: msg.substring(0, 50), qty: 0, status: 'replied', time: new Date().toLocaleTimeString() });
     }
   } catch(e) {
-    reply = genBuyerReply(msg);
+    removeThing(tid);
+    addMsg('bMsgs', 'Unable to reach the AI agent. Please check your connection and try again.', 'agent', 'Agent');
   }
 
-  const el = document.getElementById(tid);
-  if (el) el.remove();
-
-  if (source === 'real') {
-    reply = reply + '\n\n[Response from Supplier Agent — Laptop B via OpenClaw]';
-  }
-
-  addBuyerMsg(reply, 'agent');
-  document.getElementById('buyerSendBtn').disabled = false;
-
-  if (msg.toLowerCase().match(/need|want|order|looking for|require/)) {
-    db.orders.push({
-      id: Date.now(), request: msg, reply,
-      time: new Date().toLocaleString(),
-      status: source === 'real' ? 'Live Quote' : 'Simulated Quote'
-    });
-  }
+  document.getElementById('bSendBtn').disabled = false;
 }
 
-function genBuyerReply(msg) {
-  const lower = msg.toLowerCase();
-  const allInv = [];
-  db.users.filter(u => u.type === 'supplier').forEach(s => {
-    (db.inventory[s.id] || []).forEach(i => allInv.push({ ...i, supplier: s.company, sid: s.id }));
-  });
-
-  const match = allInv.find(i =>
-    lower.includes(i.part.toLowerCase()) ||
-    (lower.includes('esp32') && i.part.toLowerCase().includes('esp32')) ||
-    (lower.includes('stm32') && i.part.toLowerCase().includes('stm32')) ||
-    (lower.includes('raspberry') && i.part.toLowerCase().includes('raspberry')) ||
-    (lower.includes('dht') && i.part.toLowerCase().includes('dht')) ||
-    (lower.includes('atmega') && i.part.toLowerCase().includes('atmega'))
-  );
-
-  const qm = msg.match(/(\d+)/);
-  const qty = qm ? parseInt(qm[1]) : 100;
-
-  if (match) {
-    const total = (match.price * qty).toFixed(2);
-    db.requests.push({ id: Date.now(), customer: currentUser.company, part: match.part, qty, sid: match.sid, status: 'replied', time: new Date().toLocaleTimeString() });
-    updateSuppBadge();
-    // Find all suppliers with this part
-    const allMatches = allInv.filter(i => i.part === match.part || i.part.toLowerCase().includes(match.part.split('-')[0].toLowerCase()));
-    
-    if (match.stock >= qty) {
-      let response = `I contacted ${allMatches.length} supplier agent${allMatches.length > 1 ? "s" : ""} and received the following quotes for ${match.part}:\n\n`;
-      allMatches.forEach((m, idx) => {
-        const t = (m.price * qty).toFixed(2);
-        const avail = m.stock >= qty ? "In Stock" : "Partial Stock";
-        response += `${idx+1}. ${m.supplier}\n   Price: $${m.price}/unit  |  Total: $${t}  |  Stock: ${m.stock} units  |  ${avail}\n   Lead Time: ${m.lead}\n\n`;
-      });
-      response += `Best price: ${allMatches.sort((a,b)=>a.price-b.price)[0].supplier} at $${allMatches.sort((a,b)=>a.price-b.price)[0].price}/unit.\n\nReply "confirm" to place the order with the best supplier.`;
-      return response;
-    } else {
-      return `I contacted supplier agents for ${match.part}. Best available option:\n\nSupplier: ${match.supplier}\nAvailable Stock: ${match.stock} units (you need ${qty})\nPartial order: $${(match.price * match.stock).toFixed(2)} for ${match.stock} units\nLead Time: ${match.lead}\n\nThey expect full restocking in 2-3 weeks. Reply "confirm partial" to proceed.`;
-    }
-  }
-
-  // Handle order confirmation
-  if (lower.includes('confirm')) {
-    const lastOrder = db.orders[db.orders.length - 1];
-    if (lastOrder) {
-      lastOrder.status = 'Confirmed';
-      // Notify supplier
-      db.requests.push({ id: Date.now(), customer: currentUser.company, part: 'Confirmed Order', qty: 0, sid: 2, status: 'confirmed', time: new Date().toLocaleTimeString() });
-      return `Order confirmed. I have notified the supplier agent and submitted the purchase request.\n\nOrder Reference: ORD-${Date.now().toString().slice(-6)}\nStatus: Confirmed — awaiting supplier acknowledgement\nEstimated delivery: 3-5 business days\n\nYou will receive a notification when the supplier agent confirms shipment.`;
-    }
-    return `No pending order to confirm. Please request a quote first.`;
-  }
-
-  if (lower.match(/hi|hello|good/)) return `Good day. I am ready to source components for you. You can ask for parts by name, for example: "I need 500 ESP32-WROOM-32E chips" or "Quote for 200 STM32F103C8T6". I will check all active suppliers immediately.`;
-
-  if (allInv.length > 0) return `I searched the platform but could not find an exact match for your request. Currently available from our supplier network: ${allInv.slice(0,4).map(i=>i.part).join(', ')}. Would you like quotes for any of these?`;
-
-  return `I am searching the supplier network for your request. No suppliers are currently active on the platform. Once suppliers join and add inventory, I can retrieve instant quotes for you.`;
-}
-
-function addBuyerMsg(text, role) {
-  const msgs = document.getElementById('buyerMsgs');
-  const who = role === 'user' ? currentUser.company : 'Agent';
-  const cls = role === 'user' ? 'right' : '';
-  msgs.innerHTML += `<div class="msg-row ${cls}"><div class="msg-who">${who}</div><div class="msg-bub ${role}">${text.replace(/\n/g,'<br>')}</div></div>`;
-  msgs.scrollTop = msgs.scrollHeight;
-}
-
-function renderBuyerOrders() {
-  const body = document.getElementById('buyerOrdersBody');
-  if (!db.orders.length) { body.innerHTML = '<div class="empty-state">No orders yet.</div>'; return; }
+function renderOrders() {
+  const myOrders = platform.orders.filter(o => o.userId === currentUser.id);
+  const body = document.getElementById('bOrdersBody');
+  if (!myOrders.length) { body.innerHTML = '<div class="empty">No orders yet.</div>'; return; }
   body.innerHTML = `<table><thead><tr><th>Request</th><th>Time</th><th>Status</th></tr></thead><tbody>` +
-    db.orders.map(o => `<tr><td style="font-weight:500;max-width:400px;">${o.request}</td><td style="font-family:'DM Mono',monospace;color:var(--text-3);font-size:12px;">${o.time}</td><td><span class="tag green">${o.status}</span></td></tr>`).join('') +
+    myOrders.map(o => `<tr><td style="font-weight:500;max-width:400px;">${o.message}</td><td style="font-family:'DM Mono',monospace;color:var(--text3);font-size:12px;">${o.time}</td><td><span class="tag ${o.status==='Confirmed'?'green':'gold'}">${o.status}</span></td></tr>`).join('') +
     `</tbody></table>`;
 }
 
-function loadBuyerSuppliers() {
-  const suppliers = db.users.filter(u => u.type === 'supplier');
-  const el = document.getElementById('buyerSupplierCards');
-  if (!suppliers.length) { el.innerHTML = '<div class="empty-state">No suppliers on platform yet.</div>'; return; }
+function renderBuyerSuppliers() {
+  const suppliers = platform.users.filter(u => u.type === 'supplier');
+  const el = document.getElementById('bSuppCards');
+  if (!suppliers.length) { el.innerHTML = '<div class="empty">No suppliers on platform yet.</div>'; return; }
   el.innerHTML = suppliers.map(s => {
-    const inv = db.inventory[s.id] || [];
-    const totalStock = inv.reduce((sum, i) => sum + i.stock, 0);
+    const inv = platform.inventory[s.id] || [];
+    const total = inv.reduce((sum,i)=>sum+i.stock,0);
     return `<div class="supp-card">
       <div class="supp-card-tag">Verified Supplier</div>
       <h3>${s.company}</h3>
-      <p>${inv.length} components · ${totalStock.toLocaleString()} units total stock</p>
-      <div style="margin-top:10px;font-size:12px;color:var(--text-3);">${inv.slice(0,3).map(i=>i.part).join(', ')}${inv.length>3?' +more':''}</div>
-      <div class="supp-card-footer">
-        <div class="supp-online"><div class="status-dot" style="width:5px;height:5px;"></div>Agent Online</div>
-        <span class="tag green">${inv.length} parts</span>
-      </div>
+      <p>${inv.length} parts · ${total.toLocaleString()} units total stock</p>
+      <div style="font-size:12px;color:var(--text3);margin-bottom:12px;">${inv.slice(0,3).map(i=>i.part).join(', ')}${inv.length>3?` +${inv.length-3} more`:''}</div>
+      <div class="supp-online"><div class="sdot s" style="width:5px;height:5px;"></div>Agent Online</div>
     </div>`;
   }).join('');
 }
 
 // ===== SUPPLIER PAGES =====
-function supplierPage(p) {
+function sPage(p) {
   document.querySelectorAll('#supplier-shell .plat-page').forEach(el => el.classList.remove('active'));
-  document.querySelectorAll('#supplier-shell .plat-tab').forEach(el => { el.classList.remove('active'); });
-  document.getElementById('supplier-' + p).classList.add('active');
-  const tab = document.getElementById('stab-' + p);
-  if (tab) { tab.classList.add('active', 'supplier'); }
-  if (p === 'inventory') renderInv();
-  if (p === 'requests') renderReq();
-  if (p === 'analytics') renderAna();
+  document.querySelectorAll('#supplier-shell .plat-tab').forEach(el => { el.classList.remove('active','s'); });
+  document.getElementById('s-' + p).classList.add('active');
+  const tab = document.getElementById('st-' + p);
+  if (tab) tab.classList.add('active', 's');
+  if (p === 'inventory') renderSuppInv();
+  if (p === 'requests') renderRequests();
+  if (p === 'analytics') renderAnalytics();
 }
 
-function addPart() {
-  const part = document.getElementById('nPart').value.trim();
-  const price = parseFloat(document.getElementById('nPrice').value);
-  const stock = parseInt(document.getElementById('nStock').value);
-  const moq = parseInt(document.getElementById('nMOQ').value) || 1;
-  const lead = document.getElementById('nLead').value || '3-5 days';
-  const desc = document.getElementById('nDesc').value || '';
-  if (!part || !price || !stock) { alert('Please fill in Part, Price and Stock.'); return; }
-  if (!db.inventory[currentUser.id]) db.inventory[currentUser.id] = [];
-  db.inventory[currentUser.id].push({ part, price, stock, moq, lead, desc });
-  ['nPart','nPrice','nStock','nMOQ','nLead','nDesc'].forEach(id => document.getElementById(id).value = '');
-  addSuppLog('Inventory Updated', `Added ${part} at $${price}/unit — ${stock} units in stock`);
-  supplierPage('inventory');
-}
-
-function renderInv() {
-  const inv = db.inventory[currentUser.id] || [];
-  document.getElementById('sTotalParts').textContent = inv.length;
-  document.getElementById('sTotalUnits').textContent = inv.reduce((s,i)=>s+i.stock,0).toLocaleString();
-  const myReq = db.requests.filter(r=>r.sid===currentUser.id);
-  document.getElementById('sReqToday').textContent = myReq.length;
-  const grid = document.getElementById('suppInvGrid');
-  if (!inv.length) { grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1;">No inventory yet. Add parts to activate your agent.</div>'; return; }
-  grid.innerHTML = inv.map(i => `
-    <div class="inv-card">
-      <div class="inv-part">${i.part}</div>
-      <div class="inv-price">$${i.price}</div>
-      <div class="inv-detail">${i.stock.toLocaleString()} units · MOQ ${i.moq}</div>
-      <div class="inv-detail">Lead time: ${i.lead}</div>
-      <div class="inv-avail ${i.stock<100?'low':''}">${i.stock>100?'In Stock':'Low Stock'}</div>
-    </div>`).join('');
-}
-
-function renderReq() {
-  const myReq = db.requests.filter(r=>r.sid===currentUser.id);
-  const el = document.getElementById('suppReqList');
-  if (!myReq.length) { el.innerHTML = '<div class="empty-state">No requests yet.</div>'; return; }
-  el.innerHTML = myReq.map(r => `
-    <div class="req-card">
-      <div class="req-info"><h4>${r.customer} — ${r.part} × ${r.qty}</h4><p>Received at ${r.time}</p></div>
-      <span class="tag ${r.status==='replied'?'green':'gold'}">${r.status.charAt(0).toUpperCase()+r.status.slice(1)}</span>
-    </div>`).join('');
-}
-
-function renderAna() {
-  const myReq = db.requests.filter(r=>r.sid===currentUser.id);
-  const inv = db.inventory[currentUser.id]||[];
-  document.getElementById('anaTot').textContent = myReq.length;
-  document.getElementById('anaResp').textContent = myReq.filter(r=>r.status==='replied').length;
-  document.getElementById('anaOOS2').textContent = 0;
-  const rev = myReq.reduce((s,r)=>{ const item=inv.find(i=>i.part===r.part); return s+(item?item.price*r.qty:0); },0);
-  document.getElementById('anaRev').textContent = '$'+rev.toLocaleString();
-  const byPart = {};
-  myReq.forEach(r=>{byPart[r.part]=(byPart[r.part]||0)+1;});
-  const body = document.getElementById('anaTableBody');
-  if (!Object.keys(byPart).length) { body.innerHTML = '<div class="empty-state">No data yet.</div>'; return; }
-  body.innerHTML = `<table><thead><tr><th>Component</th><th>Total Requests</th><th>Status</th></tr></thead><tbody>` +
-    Object.entries(byPart).map(([part,count])=>`<tr><td style="font-weight:500;">${part}</td><td>${count}</td><td><span class="tag green">Responded</span></td></tr>`).join('') +
-    `</tbody></table>`;
-}
-
-function addSuppLog(title, detail) {
-  const log = document.getElementById('suppActivityLog');
-  log.innerHTML += `<div class="msg-row"><div class="msg-who">Agent · ${new Date().toLocaleTimeString()}</div><div class="msg-bub agent"><strong>${title}</strong><br>${detail}</div></div>`;
-  log.scrollTop = log.scrollHeight;
-}
-
-function suppChat() {
-  const input = document.getElementById('suppInput');
+async function suppSend() {
+  const input = document.getElementById('sInput');
   const msg = input.value.trim();
   if (!msg) return;
   input.value = '';
+  addMsg('sMsgs', msg, 'user', currentUser.company);
 
-  const log = document.getElementById('suppActivityLog');
-  log.innerHTML += `<div class="msg-row right"><div class="msg-who">${currentUser.company}</div><div class="msg-bub" style="background:var(--supplier);color:#fff;border-bottom-right-radius:2px;">${msg.replace(/\n/g,'<br>')}</div></div>`;
-  log.scrollTop = log.scrollHeight;
+  if (!platform.inventory[currentUser.id]) platform.inventory[currentUser.id] = [];
 
-  // Split by newline or sentence endings to handle multiple items at once
-  const lines = msg.split(/\n|(?<=\.|days)\s+(?=I have|Add|We are|Update|Show)/g).map(l => l.trim()).filter(l => l.length > 3);
-  const replies = [];
+  const invContext = JSON.stringify(platform.inventory[currentUser.id]);
 
-  if (lines.length > 1) {
-    for (const line of lines) {
-      const r = parseInventoryMessage(line);
-      replies.push(r);
-    }
-  } else {
-    replies.push(parseInventoryMessage(msg));
-  }
+  const systemPrompt = `You are a supplier agent for ${currentUser.company} on the Aixinchips procurement platform.
 
-  setTimeout(() => {
-    const combined = replies.join('<br><br>');
-    log.innerHTML += `<div class="msg-row"><div class="msg-who">Agent</div><div class="msg-bub agent">${combined}</div></div>`;
-    log.scrollTop = log.scrollHeight;
-    renderInv();
-  }, 600);
-}
+Current inventory: ${invContext}
 
-function parseInventoryMessage(msg) {
-  const lower = msg.toLowerCase();
-  if (!db.inventory[currentUser.id]) db.inventory[currentUser.id] = [];
-  const inv = db.inventory[currentUser.id];
+Your job is to help the supplier update their inventory. When they tell you what they have in stock, extract the information and respond with a JSON block followed by a friendly confirmation message.
 
-  const known = [
-    'ESP32-WROOM-32E','ESP32-S3-WROOM-1','ESP32-C3-MINI-1','ESP32',
-    'STM32F103C8T6','STM32F401CCU6','STM32',
-    'ATMEGA328P-PU','ATMEGA328',
-    'Raspberry Pi 4B 2GB','Raspberry Pi 4B','Raspberry Pi',
-    'DHT22','RP2040','nRF24L01+','nRF24L01','HC-SR04','BMP280','SIM800L'
-  ];
+The JSON block should be in this exact format (always include it when inventory changes):
+<inventory_update>
+{"action":"add_or_update","part":"PART_NAME","price":0.00,"stock":0,"moq":0,"lead":"X-Y days"}
+</inventory_update>
 
-  function findPart(text) {
-    for (const p of known) {
-      if (text.toLowerCase().includes(p.toLowerCase())) return p;
-    }
-    const m = text.match(/([A-Z][A-Z0-9]{2,}(?:[-][A-Z0-9]+)*)/);
-    return m ? m[1] : null;
-  }
+Or for out of stock:
+<inventory_update>
+{"action":"out_of_stock","part":"PART_NAME"}
+</inventory_update>
 
-  // Price: must follow $ sign or "at $" or "at X.XX"
-  function findPrice(text) {
-    const m1 = text.match(/at\s+\$\s*([\d.]+)/i);
-    if (m1) return parseFloat(m1[1]);
-    const m2 = text.match(/\$\s*([\d.]+)/);
-    if (m2) return parseFloat(m2[1]);
-    const m3 = text.match(/(?:price|cost)\s+(?:to|is|of)?\s*([\d.]+)/i);
-    if (m3) return parseFloat(m3[1]);
-    return null;
-  }
+Or for price update only:
+<inventory_update>
+{"action":"price_update","part":"PART_NAME","price":0.00}
+</inventory_update>
 
-  // Quantity: number before part name or after "have/got/add"
-  function findQty(text) {
-    const m1 = text.match(/(?:have|got|add|stock)\s+([\d,]+)\s/i);
-    if (m1) return parseInt(m1[1].replace(',',''));
-    const m2 = text.match(/^([\d,]+)\s+/);
-    if (m2) return parseInt(m2[1].replace(',',''));
-    const m3 = text.match(/([\d,]+)\s+units?/i);
-    if (m3) return parseInt(m3[1].replace(',',''));
-    return null;
-  }
+Or to show inventory:
+<inventory_update>
+{"action":"show"}
+</inventory_update>
 
-  const part = findPart(msg);
-  const price = findPrice(msg);
-  const qty = findQty(msg);
-  const moqMatch = msg.match(/moq\s*:?\s*(\d+)/i);
-  const moq = moqMatch ? parseInt(moqMatch[1]) : 10;
-  const leadMatch = msg.match(/(\d+[-]\d+\s*(?:business\s*)?days?)/i);
-  const lead = leadMatch ? leadMatch[1] : '3-5 days';
+Always respond in a professional, helpful tone. Confirm what you understood from their message. If they ask to show inventory, list all current items.`;
 
-  // Out of stock
-  if (lower.includes('out of stock') || lower.includes('no stock') || lower.includes('sold out')) {
-    if (part) {
-      const ex = inv.find(i => i.part.toLowerCase().includes(part.toLowerCase()));
-      if (ex) { ex.stock = 0; return `Understood. I have marked <strong>${ex.part}</strong> as out of stock.`; }
-      else { inv.push({ part, price: 0, stock: 0, moq: 1, lead: 'TBD', desc: '' }); return `Noted. <strong>${part}</strong> added as out of stock.`; }
-    }
-    return 'Which part is out of stock? Please mention the part name.';
-  }
-
-  // Price update
-  if ((lower.includes('update') || lower.includes('change')) && lower.includes('price') && part && price) {
-    const ex = inv.find(i => i.part.toLowerCase().includes(part.toLowerCase()));
-    if (ex) { ex.price = price; return `Updated. <strong>${ex.part}</strong> price is now $${price}/unit.`; }
-    else { inv.push({ part, price, stock: 0, moq, lead, desc: '' }); return `Added <strong>${part}</strong> at $${price}/unit. Please also tell me the stock quantity.`; }
-  }
-
-  // Add or update
-  if (part && price) {
-    const quantity = qty || 100;
-    const ex = inv.find(i => i.part.toLowerCase() === part.toLowerCase());
-    if (ex) {
-      ex.price = price; ex.stock = quantity; ex.moq = moq; ex.lead = lead;
-      return `Updated <strong>${part}</strong>: $${price}/unit, ${quantity.toLocaleString()} units in stock, lead time ${lead}.`;
-    } else {
-      inv.push({ part, price, stock: quantity, moq, lead, desc: '' });
-      return `Added <strong>${part}</strong>: $${price}/unit, ${quantity.toLocaleString()} units, MOQ ${moq}, lead time ${lead}. Buyers can now request quotes for this.`;
-    }
-  }
-
-  // Show inventory
-  if (lower.includes('show') || lower.includes('list') || lower.match(/my inventory/)) {
-    if (inv.length === 0) return 'Your inventory is empty. Tell me what parts you have in stock.';
-    return 'Your current inventory:<br>' + inv.map(i =>
-      `<strong>${i.part}</strong> — $${i.price}/unit, ${i.stock.toLocaleString()} units${i.stock === 0 ? ' <span style="color:var(--danger)">(Out of Stock)</span>' : ''}`
-    ).join('<br>');
-  }
-
-  // Remove
-  if (lower.includes('remove') || lower.includes('delete')) {
-    if (part) {
-      const idx = inv.findIndex(i => i.part.toLowerCase().includes(part.toLowerCase()));
-      if (idx > -1) { inv.splice(idx, 1); return `Removed <strong>${part}</strong> from your inventory.`; }
-    }
-    return 'Which part would you like to remove?';
-  }
-
-  return `I did not quite understand that. Try:<br>• "I have 500 ESP32-WROOM-32E at $2.80 each, lead time 3-5 days"<br>• "Add 1000 STM32F103C8T6 at $2.90, MOQ 50"<br>• "Out of stock: Raspberry Pi 4B"<br>• "Update ESP32 price to $2.60"<br>• "Show my inventory"`;
-}
-
-function showLanding() {
-  ['auth','buyer-shell','supplier-shell'].forEach(id => { const el = document.getElementById(id); if(el) el.style.display='none'; });
-  document.getElementById('landing').style.display = 'flex';
-  document.getElementById('landing').style.flexDirection = 'column';
-}
-
-function showAuth(type, mode) {
-  userType = type; authMode = mode;
-  document.getElementById('landing').style.display = 'none';
-  document.getElementById('auth').style.display = 'block';
-  const isSupplier = type === 'supplier';
-  const panel = document.getElementById('authLeftPanel');
-  panel.className = 'auth-left' + (isSupplier ? ' supplier-side' : '');
-  document.getElementById('authLeftTitle').textContent = isSupplier ? 'Sell Smarter,\nAutomate.' : 'Procurement,\nAutomated.';
-  document.getElementById('authLeftSub').textContent = isSupplier
-    ? 'Your agent handles buyer inquiries 24/7 from your inventory catalogue.'
-    : 'Your agent negotiates with suppliers while you focus on your business.';
-  const isLogin = mode === 'login';
-  document.getElementById('authTitle').textContent = isLogin ? 'Welcome back' : 'Create your account';
-  document.getElementById('authSubtitle').textContent = isLogin ? 'Sign in to your account' : (isSupplier ? 'Join as a supplier' : 'Join as a buyer');
-  document.getElementById('signupOnly').style.display = isLogin ? 'none' : 'block';
-  document.getElementById('authBtn').textContent = isLogin ? 'Sign In' : 'Create Account';
-  document.getElementById('authBtn').className = 'btn btn-full ' + (isSupplier ? 'btn-supplier' : 'btn-primary');
-  document.getElementById('authSwitch').innerHTML = isLogin
-    ? 'No account? <a onclick="toggleMode()">Sign up</a>'
-    : 'Already have an account? <a onclick="toggleMode()">Sign in</a>';
-  document.getElementById('demoBtn').textContent = isSupplier ? 'Demo: Nexwah Components' : 'Demo: TechBuild Electronics';
-}
-
-function toggleMode() { showAuth(userType, authMode === 'login' ? 'signup' : 'login'); }
-
-function demoLogin() {
-  if (userType === 'customer') loginUser(db.users[0]);
-  else loginUser(db.users[1]);
-}
-
-function handleAuth() {
-  const email = document.getElementById('authEmail').value || 'new@company.com';
-  const pw = document.getElementById('authPassword').value || 'pass';
-  const companyEl = document.getElementById('authCompany');
-  const company = companyEl ? companyEl.value || email.split('@')[0] : email.split('@')[0];
-  if (authMode === 'login') {
-    const found = db.users.find(u => u.email === email && u.type === userType);
-    loginUser(found || { id: Date.now(), type: userType, company: email.split('@')[1] || 'Company', email, avatar: email[0].toUpperCase() });
-  } else {
-    const u = { id: Date.now(), type: userType, company: company, email, password: pw, avatar: company[0].toUpperCase() };
-    db.users.push(u);
-    if (userType === 'supplier') db.inventory[u.id] = [];
-    loginUser(u);
-  }
-}
-
-function loginUser(user) {
-  currentUser = user;
-  document.getElementById('auth').style.display = 'none';
-  if (user.type === 'customer') {
-    document.getElementById('buyer-shell').style.display = 'flex';
-    document.getElementById('buyerAvatar').textContent = user.avatar;
-    document.getElementById('buyerName').textContent = user.company;
-    document.getElementById('buyerChatAvatar').textContent = user.avatar;
-    document.getElementById('buyerAgentName').textContent = user.company + ' Procurement Agent';
-    document.getElementById('buyerWelcomeMsg').textContent = 'Good day. I am your procurement agent for ' + user.company + '. Tell me what electronic components you need and I will contact supplier agents on the platform to find you the best available pricing.';
-    document.getElementById('bsCompany').textContent = user.company;
-    document.getElementById('bsEmail').textContent = user.email;
-    loadBuyerSuppliers();
-  } else {
-    document.getElementById('supplier-shell').style.display = 'flex';
-    document.getElementById('supplierAvatar').textContent = user.avatar;
-    document.getElementById('supplierName').textContent = user.company;
-    document.getElementById('suppChatAvatar').textContent = user.avatar;
-    document.getElementById('suppAgentName').textContent = user.company + ' Supplier Agent';
-    document.getElementById('ssCompany').textContent = user.company;
-    document.getElementById('ssEmail').textContent = user.email;
-    renderInv();
-  }
-}
-
-function logout() {
-  currentUser = null;
-  ['buyer-shell','supplier-shell'].forEach(id => { document.getElementById(id).style.display='none'; });
-  showLanding();
-}
-
-function buyerPage(p) {
-  document.querySelectorAll('#buyer-shell .plat-page').forEach(el => el.classList.remove('active'));
-  document.querySelectorAll('#buyer-shell .plat-tab').forEach(el => el.classList.remove('active'));
-  document.getElementById('buyer-' + p).classList.add('active');
-  const tab = document.getElementById('btab-' + p);
-  if (tab) tab.classList.add('active');
-  if (p === 'suppliers') loadBuyerSuppliers();
-  if (p === 'orders') renderBuyerOrders();
-}
-
-async function buyerSend() {
-  const input = document.getElementById('buyerInput');
-  const msg = input.value.trim();
-  if (!msg) return;
-  input.value = '';
-  addBuyerMsg(msg, 'user');
-  document.getElementById('buyerSendBtn').disabled = true;
-
-  const tid = 'think-' + Date.now();
-  const msgs = document.getElementById('buyerMsgs');
-  msgs.innerHTML += `<div class="msg-row" id="${tid}"><div class="msg-who">Agent</div><div class="msg-bub thinking">Contacting supplier agents on Laptop B <span class="dots"><span></span><span></span><span></span></span></div></div>`;
-  msgs.scrollTop = msgs.scrollHeight;
-
-  let reply = '';
-  let source = 'simulated';
+  const tid = addThinking('sMsgs', 'Processing');
 
   try {
-    const res = await fetch('http://localhost:3001/api/chat', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: msg })
-    });
-    if (res.ok) {
-      const data = await res.json();
-      reply = data.reply;
-      source = 'real';
-    } else {
-      reply = genBuyerReply(msg);
+    const reply = await callClaude(systemPrompt, msg);
+    removeThing(tid);
+
+    // Parse inventory update from reply
+    const updateMatch = reply.match(/<inventory_update>([\s\S]*?)<\/inventory_update>/);
+    let cleanReply = reply.replace(/<inventory_update>[\s\S]*?<\/inventory_update>/g, '').trim();
+
+    if (updateMatch) {
+      try {
+        const update = JSON.parse(updateMatch[1].trim());
+        const inv = platform.inventory[currentUser.id];
+
+        if (update.action === 'add_or_update') {
+          const existing = inv.findIndex(i => i.part.toLowerCase() === update.part.toLowerCase());
+          if (existing >= 0) {
+            inv[existing] = { ...inv[existing], ...update };
+            delete inv[existing].action;
+          } else {
+            const newItem = { part: update.part, price: update.price, stock: update.stock, moq: update.moq || 10, lead: update.lead || '3-5 days' };
+            inv.push(newItem);
+          }
+        } else if (update.action === 'out_of_stock') {
+          const idx = inv.findIndex(i => i.part.toLowerCase().includes(update.part.toLowerCase()));
+          if (idx >= 0) inv[idx].stock = 0;
+        } else if (update.action === 'price_update') {
+          const idx = inv.findIndex(i => i.part.toLowerCase().includes(update.part.toLowerCase()));
+          if (idx >= 0) inv[idx].price = update.price;
+        } else if (update.action === 'show') {
+          if (inv.length === 0) cleanReply = 'Your inventory is currently empty. Tell me what parts you have in stock and I will add them.';
+          else cleanReply = 'Your current inventory:\n\n' + inv.map(i => `${i.part}: $${i.price}/unit, ${i.stock.toLocaleString()} units${i.stock === 0 ? ' (Out of Stock)' : ''}, lead time ${i.lead}`).join('\n');
+        }
+        renderSuppInv();
+      } catch(e) {
+        console.log('Parse error:', e);
+      }
     }
+
+    addMsg('sMsgs', cleanReply || reply, 'agent', 'Agent');
   } catch(e) {
-    reply = genBuyerReply(msg);
-  }
-
-  const el = document.getElementById(tid);
-  if (el) el.remove();
-
-  if (source === 'real') reply = reply + '\n\n[Response from Supplier Agent — Laptop B via OpenClaw]';
-
-  addBuyerMsg(reply, 'agent');
-  document.getElementById('buyerSendBtn').disabled = false;
-
-  if (msg.toLowerCase().match(/need|want|order|looking for|require/)) {
-    db.orders.push({ id: Date.now(), request: msg, reply, time: new Date().toLocaleString(), status: source === 'real' ? 'Live Quote' : 'Simulated Quote' });
+    removeThing(tid);
+    addMsg('sMsgs', 'Unable to reach AI. Please check connection.', 'agent', 'Agent');
   }
 }
 
-function genBuyerReply(msg) {
-  const lower = msg.toLowerCase();
-  const allInv = [];
-  db.users.filter(u => u.type === 'supplier').forEach(s => {
-    (db.inventory[s.id] || []).forEach(i => allInv.push({ ...i, supplier: s.company, sid: s.id }));
-  });
-
-  const match = allInv.find(i =>
-    lower.includes(i.part.toLowerCase()) ||
-    (lower.includes('esp32') && i.part.toLowerCase().includes('esp32')) ||
-    (lower.includes('stm32') && i.part.toLowerCase().includes('stm32')) ||
-    (lower.includes('raspberry') && i.part.toLowerCase().includes('raspberry')) ||
-    (lower.includes('dht') && i.part.toLowerCase().includes('dht')) ||
-    (lower.includes('atmega') && i.part.toLowerCase().includes('atmega'))
-  );
-
-  const qm = msg.match(/(\d+)/);
-  const qty = qm ? parseInt(qm[1]) : 100;
-
-  if (lower.includes('confirm')) {
-    const lastOrder = db.orders[db.orders.length - 1];
-    if (lastOrder) {
-      lastOrder.status = 'Confirmed';
-      db.requests.push({ id: Date.now(), customer: currentUser.company, part: 'Confirmed Order', qty: 0, sid: 2, status: 'confirmed', time: new Date().toLocaleTimeString() });
-      return `Order confirmed. I have notified the supplier agent and submitted the purchase request.\n\nOrder Reference: ORD-${Date.now().toString().slice(-6)}\nStatus: Confirmed — awaiting supplier acknowledgement\nEstimated delivery: 3-5 business days\n\nYou will receive a notification when the supplier agent confirms shipment.`;
-    }
-    return 'No pending order to confirm. Please request a quote first.';
-  }
-
-  if (match) {
-    const allMatches = allInv.filter(i => i.part.toLowerCase().includes(match.part.split('-')[0].toLowerCase()) || i.part === match.part);
-    const total = (match.price * qty).toFixed(2);
-    if (match.stock >= qty) {
-      let response = `I contacted ${allMatches.length} supplier agent${allMatches.length > 1 ? 's' : ''} and received the following quotes for ${match.part}:\n\n`;
-      allMatches.forEach((m, idx) => {
-        const t = (m.price * qty).toFixed(2);
-        response += `${idx+1}. ${m.supplier}\n   Price: $${m.price}/unit  |  Total: $${t}  |  Stock: ${m.stock} units\n   Lead Time: ${m.lead}\n\n`;
-      });
-      const best = [...allMatches].sort((a,b) => a.price - b.price)[0];
-      response += `Best price: ${best.supplier} at $${best.price}/unit.\n\nReply "confirm" to place the order.`;
-      return response;
-    } else {
-      return `I contacted supplier agents for ${match.part}. Best available:\n\nSupplier: ${match.supplier}\nAvailable: ${match.stock} units (you need ${qty})\nPartial order: $${(match.price * match.stock).toFixed(2)}\n\nReply "confirm partial" to proceed with ${match.stock} units.`;
-    }
-  }
-
-  if (lower.match(/hi|hello|good/)) return `Good day. I am ready to source components for you. Ask for parts like: "I need 500 ESP32-WROOM-32E chips" and I will check all active suppliers immediately.`;
-
-  if (allInv.length > 0) return `I searched the platform but could not find an exact match. Currently available: ${allInv.slice(0,4).map(i=>i.part).join(', ')}. Would you like quotes for any of these?`;
-
-  return `No suppliers are currently active on the platform. Once suppliers add their inventory, I can retrieve instant quotes for you.`;
-}
-
-function addBuyerMsg(text, role) {
-  const msgs = document.getElementById('buyerMsgs');
-  const who = role === 'user' ? currentUser.company : 'Agent';
-  const cls = role === 'user' ? 'right' : '';
-  msgs.innerHTML += `<div class="msg-row ${cls}"><div class="msg-who">${who}</div><div class="msg-bub ${role}">${text.replace(/\n/g,'<br>')}</div></div>`;
-  msgs.scrollTop = msgs.scrollHeight;
-}
-
-function renderBuyerOrders() {
-  const body = document.getElementById('buyerOrdersBody');
-  if (!db.orders.length) { body.innerHTML = '<div class="empty-state">No orders yet.</div>'; return; }
-  body.innerHTML = `<table><thead><tr><th>Request</th><th>Time</th><th>Status</th></tr></thead><tbody>` +
-    db.orders.map(o => `<tr><td style="font-weight:500;max-width:400px;">${o.request}</td><td style="font-family:'DM Mono',monospace;color:var(--text-3);font-size:12px;">${o.time}</td><td><span class="tag ${o.status==='Confirmed'?'green':o.status==='Live Quote'?'blue':'gold'}">${o.status}</span></td></tr>`).join('') +
-    `</tbody></table>`;
-}
-
-function loadBuyerSuppliers() {
-  const suppliers = db.users.filter(u => u.type === 'supplier');
-  const el = document.getElementById('buyerSupplierCards');
-  if (!suppliers.length) { el.innerHTML = '<div class="empty-state">No suppliers on platform yet.</div>'; return; }
-  el.innerHTML = suppliers.map(s => {
-    const inv = db.inventory[s.id] || [];
-    const totalStock = inv.reduce((sum,i) => sum+i.stock, 0);
-    return `<div class="supp-card"><div class="supp-card-tag">Verified Supplier</div><h3>${s.company}</h3><p>${inv.length} components · ${totalStock.toLocaleString()} units total</p><div style="margin-top:10px;font-size:12px;color:var(--text-3);">${inv.slice(0,3).map(i=>i.part).join(', ')}${inv.length>3?' +more':''}</div><div class="supp-card-footer"><div class="supp-online"><div class="status-dot" style="width:5px;height:5px;"></div>Agent Online</div><span class="tag green">${inv.length} parts</span></div></div>`;
-  }).join('');
-}
-
-function supplierPage(p) {
-  document.querySelectorAll('#supplier-shell .plat-page').forEach(el => el.classList.remove('active'));
-  document.querySelectorAll('#supplier-shell .plat-tab').forEach(el => el.classList.remove('active'));
-  document.getElementById('supplier-' + p).classList.add('active');
-  const tab = document.getElementById('stab-' + p);
-  if (tab) tab.classList.add('active', 'supplier');
-  if (p === 'inventory') renderInv();
-  if (p === 'requests') renderReq();
-  if (p === 'analytics') renderAna();
-}
-
-function renderInv() {
-  const inv = db.inventory[currentUser.id] || [];
-  document.getElementById('sTotalParts').textContent = inv.length;
-  document.getElementById('sTotalUnits').textContent = inv.reduce((s,i)=>s+i.stock,0).toLocaleString();
-  const myReq = db.requests.filter(r=>r.sid===currentUser.id);
-  document.getElementById('sReqToday').textContent = myReq.length;
-  const grid = document.getElementById('suppInvGrid');
-  if (!inv.length) { grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1;">No inventory yet. Go to Agent Activity and tell your agent what you have in stock.</div>'; return; }
+function renderSuppInv() {
+  const inv = platform.inventory[currentUser.id] || [];
+  document.getElementById('sTotP').textContent = inv.length;
+  document.getElementById('sTotU').textContent = inv.reduce((s,i)=>s+i.stock,0).toLocaleString();
+  const myReq = platform.requests.filter(r=>r.sid===currentUser.id);
+  document.getElementById('sTotR').textContent = myReq.length;
+  const grid = document.getElementById('sInvGrid');
+  if (!inv.length) { grid.innerHTML = '<div class="empty" style="grid-column:1/-1;">No inventory yet. Go to My Agent and tell it what you have in stock.</div>'; return; }
   grid.innerHTML = inv.map(i => `
     <div class="inv-card">
       <div class="inv-part">${i.part}</div>
       <div class="inv-price">$${i.price}</div>
       <div class="inv-detail">${i.stock.toLocaleString()} units · MOQ ${i.moq}</div>
-      <div class="inv-detail">Lead time: ${i.lead}</div>
-      <div class="inv-avail ${i.stock===0?'low':i.stock<100?'low':''}">${i.stock===0?'Out of Stock':i.stock<100?'Low Stock':'In Stock'}</div>
+      <div class="inv-detail">Lead: ${i.lead}</div>
+      <div class="inv-avail ${i.stock===0?'low':i.stock<50?'low':''}">${i.stock===0?'Out of Stock':i.stock<50?'Low Stock':'In Stock'}</div>
     </div>`).join('');
 }
 
-function renderReq() {
-  const myReq = db.requests.filter(r=>r.sid===currentUser.id);
-  const el = document.getElementById('suppReqList');
-  document.getElementById('sReqToday').textContent = myReq.length;
-  if (!myReq.length) { el.innerHTML = '<div class="empty-state">No requests yet.</div>'; return; }
+function renderRequests() {
+  const myReq = platform.requests.filter(r=>r.sid===currentUser.id);
+  const el = document.getElementById('sReqList');
+  if (!myReq.length) { el.innerHTML = '<div class="empty">No requests yet.</div>'; return; }
   el.innerHTML = myReq.map(r => `
     <div class="req-card">
-      <div class="req-info"><h4>${r.customer} — ${r.part} × ${r.qty}</h4><p>Received at ${r.time}</p></div>
-      <span class="tag ${r.status==='replied'||r.status==='confirmed'?'green':'gold'}">${r.status.charAt(0).toUpperCase()+r.status.slice(1)}</span>
+      <div class="req-info"><h4>${r.customer}</h4><p>${r.part} · ${r.time}</p></div>
+      <span class="tag green">${r.status}</span>
     </div>`).join('');
 }
 
-function renderAna() {
-  const myReq = db.requests.filter(r=>r.sid===currentUser.id);
-  const inv = db.inventory[currentUser.id]||[];
+function renderAnalytics() {
+  const myReq = platform.requests.filter(r=>r.sid===currentUser.id);
+  const inv = platform.inventory[currentUser.id]||[];
   document.getElementById('anaTot').textContent = myReq.length;
-  document.getElementById('anaResp').textContent = myReq.filter(r=>r.status==='replied'||r.status==='confirmed').length;
-  document.getElementById('anaOOS2').textContent = inv.filter(i=>i.stock===0).length;
-  const rev = myReq.reduce((s,r)=>{ const item=inv.find(i=>i.part===r.part); return s+(item?item.price*r.qty:0); },0);
-  document.getElementById('anaRev').textContent = '$'+rev.toLocaleString();
-  const byPart = {};
-  myReq.forEach(r=>{byPart[r.part]=(byPart[r.part]||0)+1;});
-  const body = document.getElementById('anaTableBody');
-  if (!Object.keys(byPart).length) { body.innerHTML = '<div class="empty-state">No data yet.</div>'; return; }
-  body.innerHTML = `<table><thead><tr><th>Component</th><th>Total Requests</th><th>Status</th></tr></thead><tbody>` +
-    Object.entries(byPart).map(([part,count])=>`<tr><td style="font-weight:500;">${part}</td><td>${count}</td><td><span class="tag green">Responded</span></td></tr>`).join('') +
-    `</tbody></table>`;
+  document.getElementById('anaResp').textContent = myReq.length;
+  document.getElementById('anaOOS').textContent = inv.filter(i=>i.stock===0).length;
+  document.getElementById('anaRev').textContent = '$0';
 }
 
-function addSuppLog(title, detail) {
-  const log = document.getElementById('suppActivityLog');
-  if (!log) return;
-  log.innerHTML += `<div class="msg-row"><div class="msg-who">Agent · ${new Date().toLocaleTimeString()}</div><div class="msg-bub agent"><strong>${title}</strong><br>${detail}</div></div>`;
-  log.scrollTop = log.scrollHeight;
+// ===== HELPERS =====
+function addMsg(containerId, text, role, who) {
+  const el = document.getElementById(containerId);
+  const cls = role === 'user' ? 'r' : '';
+  el.innerHTML += `<div class="msg-row ${cls}"><div class="msg-who">${who}</div><div class="msg-bub ${role === 'user' ? 'user' : 'agent'}">${text.replace(/\n/g,'<br>')}</div></div>`;
+  el.scrollTop = el.scrollHeight;
 }
 
-function suppChat() {
-  const input = document.getElementById('suppInput');
-  const msg = input.value.trim();
-  if (!msg) return;
-  input.value = '';
-
-  const log = document.getElementById('suppActivityLog');
-  log.innerHTML += `<div class="msg-row right"><div class="msg-who">${currentUser.company}</div><div class="msg-bub" style="background:var(--supplier);color:#fff;border-bottom-right-radius:2px;">${msg.replace(/\n/g,'<br>')}</div></div>`;
-  log.scrollTop = log.scrollHeight;
-
-  const lines = msg.split('\n').map(l => l.trim()).filter(l => l.length > 3);
-  const replies = lines.length > 1 ? lines.map(l => parseInventoryMessage(l)) : [parseInventoryMessage(msg)];
-
-  setTimeout(() => {
-    const combined = replies.join('<br><br>');
-    log.innerHTML += `<div class="msg-row"><div class="msg-who">Agent</div><div class="msg-bub agent">${combined}</div></div>`;
-    log.scrollTop = log.scrollHeight;
-    renderInv();
-  }, 600);
+function addThinking(containerId, text) {
+  const id = 'think-' + Date.now();
+  const el = document.getElementById(containerId);
+  el.innerHTML += `<div class="msg-row" id="${id}"><div class="msg-who">Agent</div><div class="msg-bub think">${text} <span class="dots"><span></span><span></span><span></span></span></div></div>`;
+  el.scrollTop = el.scrollHeight;
+  return id;
 }
+
+function removeThing(id) { const el = document.getElementById(id); if(el) el.remove(); }
 
 document.addEventListener('keydown', e => {
-  if (e.key==='Enter' && !e.shiftKey) {
-    if (document.activeElement.id==='buyerInput') { e.preventDefault(); buyerSend(); }
-    if (document.activeElement.id==='suppInput') { e.preventDefault(); suppChat(); }
+  if (e.key === 'Enter' && !e.shiftKey) {
+    if (document.activeElement.id === 'bInput') { e.preventDefault(); buyerSend(); }
+    if (document.activeElement.id === 'sInput') { e.preventDefault(); suppSend(); }
   }
 });
 
