@@ -1265,7 +1265,7 @@ function buyerPage(p) {
   if (p === 'orders') renderBuyerOrders();
 }
 
-function buyerSend() {
+async function buyerSend() {
   const input = document.getElementById('buyerInput');
   const msg = input.value.trim();
   if (!msg) return;
@@ -1275,18 +1275,46 @@ function buyerSend() {
 
   const tid = 'think-' + Date.now();
   const msgs = document.getElementById('buyerMsgs');
-  msgs.innerHTML += `<div class="msg-row" id="${tid}"><div class="msg-who">Agent</div><div class="msg-bub thinking">Contacting supplier agents <span class="dots"><span></span><span></span><span></span></span></div></div>`;
+  msgs.innerHTML += `<div class="msg-row" id="${tid}"><div class="msg-who">Agent</div><div class="msg-bub thinking">Contacting supplier agents on Laptop B <span class="dots"><span></span><span></span><span></span></span></div></div>`;
   msgs.scrollTop = msgs.scrollHeight;
 
-  setTimeout(() => {
-    document.getElementById(tid).remove();
-    const reply = genBuyerReply(msg);
-    addBuyerMsg(reply, 'agent');
-    document.getElementById('buyerSendBtn').disabled = false;
-    if (msg.toLowerCase().match(/need|want|order|looking for|require/)) {
-      db.orders.push({ id: Date.now(), request: msg, reply, time: new Date().toLocaleString(), status: 'Quote Received' });
+  let reply = '';
+  let source = 'simulated';
+
+  try {
+    const res = await fetch('http://localhost:3001/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: msg })
+    });
+    if (res.ok) {
+      const data = await res.json();
+      reply = data.reply;
+      source = 'real';
+    } else {
+      reply = genBuyerReply(msg);
     }
-  }, 2800);
+  } catch(e) {
+    reply = genBuyerReply(msg);
+  }
+
+  const el = document.getElementById(tid);
+  if (el) el.remove();
+
+  if (source === 'real') {
+    reply = reply + '\n\n[Response from Supplier Agent — Laptop B via OpenClaw]';
+  }
+
+  addBuyerMsg(reply, 'agent');
+  document.getElementById('buyerSendBtn').disabled = false;
+
+  if (msg.toLowerCase().match(/need|want|order|looking for|require/)) {
+    db.orders.push({
+      id: Date.now(), request: msg, reply,
+      time: new Date().toLocaleString(),
+      status: source === 'real' ? 'Live Quote' : 'Simulated Quote'
+    });
+  }
 }
 
 function genBuyerReply(msg) {
