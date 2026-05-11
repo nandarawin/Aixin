@@ -1154,7 +1154,9 @@ let authMode = 'signup';
 const db = {
   users: [
     { id: 1, type: 'customer', company: 'TechBuild Electronics', email: 'buyer@techbuild.com', password: 'demo123', avatar: 'T' },
-    { id: 2, type: 'supplier', company: 'Nexwah Components', email: 'supplier@nexwah.com', password: 'demo123', avatar: 'N' }
+    { id: 2, type: 'supplier', company: 'Nexwah Components', email: 'supplier@nexwah.com', password: 'demo123', avatar: 'N' },
+    { id: 3, type: 'supplier', company: 'Delta Electronics', email: 'supplier@delta.com', password: 'demo123', avatar: 'D' },
+    { id: 4, type: 'supplier', company: 'Pacific Components', email: 'supplier@pacific.com', password: 'demo123', avatar: 'P' }
   ],
   inventory: {
     2: [
@@ -1163,6 +1165,18 @@ const db = {
       { part: 'ATMEGA328P-PU', price: 2.10, stock: 4000, moq: 50, lead: '3-5 days', desc: '8-bit AVR Microcontroller' },
       { part: 'Raspberry Pi 4B 2GB', price: 50.00, stock: 3, moq: 1, lead: '7-10 days', desc: 'Single Board Computer' },
       { part: 'DHT22', price: 1.50, stock: 2000, moq: 10, lead: '3-5 days', desc: 'Temperature & Humidity Sensor' }
+    ],
+    3: [
+      { part: 'ESP32-S3-WROOM-1', price: 3.50, stock: 600, moq: 10, lead: '5-7 days', desc: 'ESP32-S3 AI Module' },
+      { part: 'RP2040', price: 1.40, stock: 5000, moq: 100, lead: '3-5 days', desc: 'Raspberry Pi Dual-core MCU' },
+      { part: 'nRF24L01+', price: 1.90, stock: 2000, moq: 10, lead: '3-5 days', desc: '2.4GHz RF Transceiver' },
+      { part: 'HC-SR04', price: 0.90, stock: 3000, moq: 10, lead: '2-3 days', desc: 'Ultrasonic Distance Sensor' }
+    ],
+    4: [
+      { part: 'ESP32-C3-MINI-1', price: 1.80, stock: 1200, moq: 20, lead: '4-6 days', desc: 'Low Power Wi-Fi Module' },
+      { part: 'STM32F401CCU6', price: 3.80, stock: 1500, moq: 25, lead: '5-7 days', desc: 'ARM Cortex-M4 MCU' },
+      { part: 'BMP280', price: 0.80, stock: 4000, moq: 20, lead: '2-3 days', desc: 'Barometric Pressure Sensor' },
+      { part: 'SIM800L', price: 5.80, stock: 400, moq: 5, lead: '7-10 days', desc: 'GSM/GPRS Module' }
     ]
   },
   requests: [],
@@ -1340,11 +1354,33 @@ function genBuyerReply(msg) {
     const total = (match.price * qty).toFixed(2);
     db.requests.push({ id: Date.now(), customer: currentUser.company, part: match.part, qty, sid: match.sid, status: 'replied', time: new Date().toLocaleTimeString() });
     updateSuppBadge();
+    // Find all suppliers with this part
+    const allMatches = allInv.filter(i => i.part === match.part || i.part.toLowerCase().includes(match.part.split('-')[0].toLowerCase()));
+    
     if (match.stock >= qty) {
-      return `I have received a quote from ${match.supplier}.\n\nPart: ${match.part}\nUnit Price: $${match.price}\nQuantity: ${qty} units\nTotal: $${total}\nAvailable Stock: ${match.stock.toLocaleString()} units\nLead Time: ${match.lead}\n\nShall I confirm this order?`;
+      let response = `I contacted ${allMatches.length} supplier agent${allMatches.length > 1 ? "s" : ""} and received the following quotes for ${match.part}:\n\n`;
+      allMatches.forEach((m, idx) => {
+        const t = (m.price * qty).toFixed(2);
+        const avail = m.stock >= qty ? "In Stock" : "Partial Stock";
+        response += `${idx+1}. ${m.supplier}\n   Price: $${m.price}/unit  |  Total: $${t}  |  Stock: ${m.stock} units  |  ${avail}\n   Lead Time: ${m.lead}\n\n`;
+      });
+      response += `Best price: ${allMatches.sort((a,b)=>a.price-b.price)[0].supplier} at $${allMatches.sort((a,b)=>a.price-b.price)[0].price}/unit.\n\nReply "confirm" to place the order with the best supplier.`;
+      return response;
     } else {
-      return `I contacted ${match.supplier}'s agent. They have ${match.stock} units of ${match.part} in stock — below your requested ${qty}.\n\nPartial order of ${match.stock} units available at $${(match.price * match.stock).toFixed(2)} total.\nThey expect restocking within 2-3 weeks.\n\nWould you like to proceed with the partial order or wait for full stock?`;
+      return `I contacted supplier agents for ${match.part}. Best available option:\n\nSupplier: ${match.supplier}\nAvailable Stock: ${match.stock} units (you need ${qty})\nPartial order: $${(match.price * match.stock).toFixed(2)} for ${match.stock} units\nLead Time: ${match.lead}\n\nThey expect full restocking in 2-3 weeks. Reply "confirm partial" to proceed.`;
     }
+  }
+
+  // Handle order confirmation
+  if (lower.includes('confirm')) {
+    const lastOrder = db.orders[db.orders.length - 1];
+    if (lastOrder) {
+      lastOrder.status = 'Confirmed';
+      // Notify supplier
+      db.requests.push({ id: Date.now(), customer: currentUser.company, part: 'Confirmed Order', qty: 0, sid: 2, status: 'confirmed', time: new Date().toLocaleTimeString() });
+      return `Order confirmed. I have notified the supplier agent and submitted the purchase request.\n\nOrder Reference: ORD-${Date.now().toString().slice(-6)}\nStatus: Confirmed — awaiting supplier acknowledgement\nEstimated delivery: 3-5 business days\n\nYou will receive a notification when the supplier agent confirms shipment.`;
+    }
+    return `No pending order to confirm. Please request a quote first.`;
   }
 
   if (lower.match(/hi|hello|good/)) return `Good day. I am ready to source components for you. You can ask for parts by name, for example: "I need 500 ESP32-WROOM-32E chips" or "Quote for 200 STM32F103C8T6". I will check all active suppliers immediately.`;
@@ -1376,7 +1412,17 @@ function loadBuyerSuppliers() {
   if (!suppliers.length) { el.innerHTML = '<div class="empty-state">No suppliers on platform yet.</div>'; return; }
   el.innerHTML = suppliers.map(s => {
     const inv = db.inventory[s.id] || [];
-    return `<div class="supp-card"><div class="supp-card-tag">Verified Supplier</div><h3>${s.company}</h3><p>${inv.length} components available · Agent active 24/7</p><div class="supp-card-footer"><div class="supp-online"><div class="status-dot" style="width:5px;height:5px;"></div>Online</div><span class="tag green">${inv.length} parts</span></div></div>`;
+    const totalStock = inv.reduce((sum, i) => sum + i.stock, 0);
+    return `<div class="supp-card">
+      <div class="supp-card-tag">Verified Supplier</div>
+      <h3>${s.company}</h3>
+      <p>${inv.length} components · ${totalStock.toLocaleString()} units total stock</p>
+      <div style="margin-top:10px;font-size:12px;color:var(--text-3);">${inv.slice(0,3).map(i=>i.part).join(', ')}${inv.length>3?' +more':''}</div>
+      <div class="supp-card-footer">
+        <div class="supp-online"><div class="status-dot" style="width:5px;height:5px;"></div>Agent Online</div>
+        <span class="tag green">${inv.length} parts</span>
+      </div>
+    </div>`;
   }).join('');
 }
 
