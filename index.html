@@ -1041,7 +1041,6 @@ tbody tr:hover td { background: var(--off-white); }
     <div class="plat-page active" id="supplier-inventory">
       <div class="plat-page-head">
         <div><h1>My Inventory</h1><p>Your agent quotes these prices to buyer agents automatically</p></div>
-        <button class="btn btn-supplier" onclick="supplierPage('add')">+ Add Parts</button>
       </div>
       <div class="stats-grid">
         <div class="stat-box"><div class="stat-box-label">Total Parts</div><div class="stat-box-val blue" id="sTotalParts">0</div></div>
@@ -1050,7 +1049,7 @@ tbody tr:hover td { background: var(--off-white); }
         <div class="stat-box"><div class="stat-box-label">Agent Status</div><div class="stat-box-val green" style="font-size:16px;margin-top:4px;">Active</div></div>
       </div>
       <div class="inv-grid" id="suppInvGrid">
-        <div class="empty-state" style="grid-column:1/-1;">No inventory yet. Add parts to activate your agent.</div>
+        <div class="empty-state" style="grid-column:1/-1;">No inventory yet. Tell your agent what you have in stock.</div>
       </div>
     </div>
 
@@ -1084,24 +1083,29 @@ tbody tr:hover td { background: var(--off-white); }
 
     <!-- Agent Activity -->
     <div class="plat-page" id="supplier-agent">
-      <div class="plat-page-head"><div><h1>Agent Activity</h1><p>What your supplier agent is doing</p></div></div>
+      <div class="plat-page-head">
+        <div><h1>Talk to Your Agent</h1><p>Tell your agent what you have in stock — it will remember and respond to buyers automatically</p></div>
+      </div>
+      <div style="background:var(--accent-light);border:1px solid #c5d8ec;border-radius:8px;padding:14px 18px;margin-bottom:20px;font-size:13px;color:var(--accent);">
+        <strong>How to update your inventory:</strong> Just tell your agent in plain language. For example: "I have 2000 ESP32-WROOM-32E in stock at $2.80 each, MOQ 10, lead time 3-5 days" or "We are out of Raspberry Pi 4B 2GB" or "Update DHT22 price to $1.20".
+      </div>
       <div class="chat-wrap">
         <div class="chat-head">
           <div class="plat-avatar seller" id="suppChatAvatar">S</div>
           <div class="chat-head-info">
             <h3 id="suppAgentName">Supplier Agent</h3>
-            <p>Listening for buyer requests · Auto-quoting</p>
+            <p>Listening for inventory updates · Auto-quoting to buyers</p>
           </div>
           <div class="chat-status"><div class="status-dot"></div>Active</div>
         </div>
         <div class="chat-msgs" id="suppActivityLog">
           <div class="msg-row">
-            <div class="msg-who">System</div>
-            <div class="msg-bub agent">Your supplier agent is active. Add inventory to begin receiving and responding to buyer requests automatically.</div>
+            <div class="msg-who">Agent</div>
+            <div class="msg-bub agent">Hello! I am your supplier agent. Tell me what components you have in stock and I will remember them and quote buyers automatically.<br><br>You can say things like:<br>• "I have 500 ESP32-WROOM-32E at $2.80 each, lead time 3-5 days"<br>• "Add 1000 STM32F103C8T6 at $2.90, MOQ 50"<br>• "We are out of Raspberry Pi 4B"<br>• "Update ESP32 price to $2.60"</div>
           </div>
         </div>
         <div class="chat-foot">
-          <textarea class="chat-input supp" id="suppInput" placeholder="Send instructions to your agent..." rows="1"></textarea>
+          <textarea class="chat-input supp" id="suppInput" placeholder="e.g. I have 2000 ESP32-WROOM-32E at $2.80 each, lead time 3-5 days..." rows="1"></textarea>
           <button class="chat-send supp" onclick="suppChat()">Send</button>
         </div>
       </div>
@@ -1510,9 +1514,91 @@ function suppChat() {
   const msg = input.value.trim();
   if (!msg) return;
   input.value = '';
+  
   const log = document.getElementById('suppActivityLog');
   log.innerHTML += `<div class="msg-row right"><div class="msg-who">${currentUser.company}</div><div class="msg-bub" style="background:var(--supplier);color:#fff;border-bottom-right-radius:2px;">${msg}</div></div>`;
-  setTimeout(() => { addSuppLog('Agent Response', 'Instruction received. I will apply this to future buyer interactions.'); }, 800);
+  log.scrollTop = log.scrollHeight;
+
+  // Parse inventory from natural language
+  const reply = parseInventoryMessage(msg);
+  setTimeout(() => {
+    log.innerHTML += `<div class="msg-row"><div class="msg-who">Agent</div><div class="msg-bub agent">${reply}</div></div>`;
+    log.scrollTop = log.scrollHeight;
+    renderInv();
+  }, 800);
+}
+
+function parseInventoryMessage(msg) {
+  const lower = msg.toLowerCase();
+  if (!db.inventory[currentUser.id]) db.inventory[currentUser.id] = [];
+  const inv = db.inventory[currentUser.id];
+
+  // Detect out of stock
+  if (lower.includes('out of stock') || lower.includes('no stock') || lower.includes('sold out')) {
+    const partMatch = msg.match(/[A-Z][A-Z0-9\-]+/g);
+    if (partMatch) {
+      const part = partMatch[0];
+      const existing = inv.find(i => i.part.toLowerCase().includes(part.toLowerCase()));
+      if (existing) {
+        existing.stock = 0;
+        return `Understood. I have updated ${existing.part} to out of stock. I will inform buyers of unavailability when they request this item.`;
+      }
+    }
+    return 'Please specify which part is out of stock.';
+  }
+
+  // Detect price update
+  if (lower.includes('update') && lower.includes('price')) {
+    const partMatch = msg.match(/[A-Z][A-Z0-9\-]+/g);
+    const priceMatch = msg.match(/\$?([\d.]+)\s*(?:each|per unit|\/unit)?/);
+    if (partMatch && priceMatch) {
+      const part = partMatch[0];
+      const price = parseFloat(priceMatch[1]);
+      const existing = inv.find(i => i.part.toLowerCase().includes(part.toLowerCase()));
+      if (existing) {
+        existing.price = price;
+        return `Price updated. ${existing.part} is now $${price} per unit. Buyers will see this new price immediately.`;
+      }
+    }
+    return 'I could not find that part in your inventory to update.';
+  }
+
+  // Detect adding new stock or updating existing
+  const priceMatch = msg.match(/\$?([\d.]+)\s*(?:each|per unit|\/unit|each unit)?/i);
+  const qtyMatch = msg.match(/(\d[\d,]*)\s*(?:units?|pcs?|pieces?|in stock)?/i);
+  const moqMatch = msg.match(/moq\s*:?\s*(\d+)/i);
+  const leadMatch = msg.match(/(\d+[-–]\d+\s*(?:business\s*)?days?)/i);
+
+  // Extract part number (caps with numbers and hyphens)
+  const partMatches = msg.match(/[A-Z][A-Z0-9]{1,}(?:[-\/][A-Z0-9]+)*/g);
+  const part = partMatches ? partMatches[0] : null;
+
+  if (part && priceMatch) {
+    const price = parseFloat(priceMatch[1]);
+    const qty = qtyMatch ? parseInt(qtyMatch[1].replace(',','')) : 100;
+    const moq = moqMatch ? parseInt(moqMatch[1]) : 10;
+    const lead = leadMatch ? leadMatch[1] : '3-5 days';
+
+    const existing = inv.find(i => i.part.toLowerCase() === part.toLowerCase());
+    if (existing) {
+      existing.price = price;
+      existing.stock = qty;
+      if (moqMatch) existing.moq = moq;
+      if (leadMatch) existing.lead = lead;
+      return `Updated. ${part}: $${price}/unit, ${qty.toLocaleString()} units in stock, lead time ${lead}. Buyers can now request quotes for this item.`;
+    } else {
+      inv.push({ part, price, stock: qty, moq, lead, desc: '' });
+      return `Added to inventory. ${part}: $${price}/unit, ${qty.toLocaleString()} units available, MOQ ${moq}, lead time ${lead}. Your agent will now quote this to buyers automatically.`;
+    }
+  }
+
+  // Check stock query
+  if (lower.includes('what') || lower.includes('show') || lower.includes('list') || lower.includes('my inventory')) {
+    if (inv.length === 0) return 'Your inventory is currently empty. Tell me what parts you have and I will add them.';
+    return 'Your current inventory:<br>' + inv.map(i => `• ${i.part} — $${i.price}/unit, ${i.stock.toLocaleString()} units`).join('<br>');
+  }
+
+  return 'I could not quite understand that. Try saying something like: "I have 500 ESP32-WROOM-32E at $2.80 each, lead time 3-5 days" and I will add it to your inventory.';
 }
 
 function updateSuppBadge() {
