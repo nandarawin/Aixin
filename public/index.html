@@ -197,7 +197,7 @@ tbody tr:hover td{background:var(--off)}
   <div class="land-stats">
     <div class="land-stat"><div class="land-stat-num">2m</div><div class="land-stat-label">Average response time</div></div>
     <div class="land-stat"><div class="land-stat-num">24/7</div><div class="land-stat-label">Agent availability</div></div>
-    <div class="land-stat"><div class="land-stat-num">AI</div><div class="land-stat-label">Powered by Claude</div></div>
+    <div class="land-stat"><div class="land-stat-num">AI</div><div class="land-stat-label">Powered by OpenClaw</div></div>
     <div class="land-stat"><div class="land-stat-num">$0</div><div class="land-stat-label">Per transaction fee</div></div>
   </div>
 </div>
@@ -266,11 +266,11 @@ tbody tr:hover td{background:var(--off)}
     </div>
     <div class="plat-page" id="b-orders">
       <div class="page-head"><div><h1>My Orders</h1><p>Procurement requests and quotes received</p></div></div>
-      <div class="tbl-wrap"><div class="tbl-head">Order History</div><div id="bOrdersBody"><div class="empty">No orders yet. Use your agent to request quotes.</div></div></div>
+      <div class="tbl-wrap"><div class="tbl-head">Order History</div><div id="bOrdersBody"><div class="empty">Loading...</div></div></div>
     </div>
     <div class="plat-page" id="b-suppliers">
       <div class="page-head"><div><h1>Active Suppliers</h1><p>Verified suppliers with agents on the platform</p></div></div>
-      <div class="supp-cards" id="bSuppCards"></div>
+      <div class="supp-cards" id="bSuppCards"><div class="empty">Loading...</div></div>
     </div>
     <div class="plat-page" id="b-settings">
       <div class="page-head"><div><h1>Account Settings</h1></div></div>
@@ -326,11 +326,11 @@ tbody tr:hover td{background:var(--off)}
         <div class="stat-b"><div class="stat-b-label">Requests</div><div class="stat-b-val gold" id="sTotR">0</div></div>
         <div class="stat-b"><div class="stat-b-label">Agent Status</div><div class="stat-b-val green" style="font-size:16px;margin-top:4px;">Active</div></div>
       </div>
-      <div class="inv-grid" id="sInvGrid"><div class="empty" style="grid-column:1/-1;">No inventory yet. Go to My Agent and tell it what you have in stock.</div></div>
+      <div class="inv-grid" id="sInvGrid"><div class="empty" style="grid-column:1/-1;">Loading...</div></div>
     </div>
     <div class="plat-page" id="s-requests">
       <div class="page-head"><div><h1>Incoming Requests</h1><p>Buyer agents that contacted your agent</p></div></div>
-      <div class="req-list" id="sReqList"><div class="empty">No requests yet.</div></div>
+      <div class="req-list" id="sReqList"><div class="empty">Loading...</div></div>
     </div>
     <div class="plat-page" id="s-analytics">
       <div class="page-head"><div><h1>Analytics</h1></div></div>
@@ -351,51 +351,22 @@ tbody tr:hover td{background:var(--off)}
 </div>
 
 <script>
-// ===== SHARED PLATFORM STATE =====
-// This is shared between all users in the same browser session
-// In production this would be a database
-const platform = {
-  users: [
-    { id: 1, type: 'customer', company: 'TechBuild Electronics', email: 'buyer@techbuild.com', password: 'demo123' },
-    { id: 2, type: 'supplier', company: 'Nexwah Components', email: 'supplier@nexwah.com', password: 'demo123' },
-    { id: 3, type: 'supplier', company: 'Delta Electronics', email: 'supplier@delta.com', password: 'demo123' }
-  ],
-  inventory: {
-    2: [
-      { part: 'ESP32-WROOM-32E', price: 2.80, stock: 2500, moq: 10, lead: '3-5 days' },
-      { part: 'STM32F103C8T6', price: 2.90, stock: 3000, moq: 50, lead: '3-5 days' },
-      { part: 'ATMEGA328P-PU', price: 2.10, stock: 4000, moq: 50, lead: '3-5 days' },
-      { part: 'Raspberry Pi 4B 2GB', price: 50.00, stock: 3, moq: 1, lead: '7-10 days' },
-      { part: 'DHT22', price: 1.50, stock: 2000, moq: 10, lead: '3-5 days' }
-    ],
-    3: [
-      { part: 'ESP32-S3-WROOM-1', price: 3.50, stock: 800, moq: 10, lead: '5-7 days' },
-      { part: 'RP2040', price: 1.40, stock: 5000, moq: 100, lead: '3-5 days' },
-      { part: 'BMP280', price: 0.80, stock: 3000, moq: 20, lead: '2-3 days' }
-    ]
-  },
-  orders: [],
-  requests: []
-};
-
+// ===== STATE =====
 let currentUser = null;
 let userType = 'customer';
 let authMode = 'signup';
 
-// ===== CLAUDE API =====
-async function callClaude(systemPrompt, userMessage) {
-  const response = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 1000,
-      system: systemPrompt,
-      messages: [{ role: 'user', content: userMessage }]
-    })
-  });
-  const data = await response.json();
-  return data.content[0].text;
+// ===== API HELPER =====
+// All calls go to YOUR server — never directly to Anthropic
+async function api(path, method = 'GET', body = null) {
+  const opts = { method, headers: { 'Content-Type': 'application/json' } };
+  if (body) opts.body = JSON.stringify(body);
+  const res = await fetch(path, opts);
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error || `HTTP ${res.status}`);
+  }
+  return res.json();
 }
 
 // ===== LANDING =====
@@ -432,26 +403,30 @@ function showAuth(type, mode) {
 
 function toggleMode() { showAuth(userType, authMode === 'login' ? 'signup' : 'login'); }
 
-function demoLogin() {
-  loginUser(userType === 'customer' ? platform.users[0] : platform.users[1]);
+async function demoLogin() {
+  const isSupp = userType === 'supplier';
+  const email = isSupp ? 'supplier@nexwah.com' : 'buyer@techbuild.com';
+  try {
+    const data = await api('/api/auth/login', 'POST', { email, password: 'demo123', type: userType });
+    loginUser(data.user);
+  } catch(e) { showErr('Demo login failed: ' + e.message); }
 }
 
-function handleAuth() {
+async function handleAuth() {
   const email = document.getElementById('authEmail').value.trim();
   const pw = document.getElementById('authPassword').value;
-  const company = document.getElementById('authCompany') ? document.getElementById('authCompany').value.trim() : '';
+  const company = document.getElementById('authCompany').value.trim();
   if (!email) { showErr('Please enter your email.'); return; }
-  if (authMode === 'login') {
-    const u = platform.users.find(u => u.email === email && u.password === pw && u.type === userType);
-    if (u) loginUser(u);
-    else showErr('Invalid email or password.');
-  } else {
-    if (!company) { showErr('Please enter your company name.'); return; }
-    const u = { id: Date.now(), type: userType, company, email, password: pw };
-    platform.users.push(u);
-    if (userType === 'supplier') platform.inventory[u.id] = [];
-    loginUser(u);
-  }
+  try {
+    let data;
+    if (authMode === 'login') {
+      data = await api('/api/auth/login', 'POST', { email, password: pw, type: userType });
+    } else {
+      if (!company) { showErr('Please enter your company name.'); return; }
+      data = await api('/api/auth/signup', 'POST', { email, password: pw, company, type: userType });
+    }
+    loginUser(data.user);
+  } catch(e) { showErr(e.message || 'Authentication failed.'); }
 }
 
 function showErr(msg) {
@@ -516,76 +491,51 @@ async function buyerSend() {
 
   const tid = addThinking('bMsgs', 'Contacting supplier agents');
 
-  // Build supplier inventory context
-  const suppContext = platform.users
-    .filter(u => u.type === 'supplier')
-    .map(s => {
-      const inv = platform.inventory[s.id] || [];
-      if (!inv.length) return null;
-      return `Supplier: ${s.company}\nInventory:\n${inv.map(i => `  - ${i.part}: $${i.price}/unit, ${i.stock} units in stock, MOQ ${i.moq}, lead time ${i.lead}${i.stock === 0 ? ' (OUT OF STOCK)' : ''}`).join('\n')}`;
-    })
-    .filter(Boolean)
-    .join('\n\n');
-
-  const systemPrompt = `You are a professional AI procurement agent for ${currentUser.company}. 
-
-You have access to the following supplier network on the Aixinchips platform:
-
-${suppContext || 'No suppliers currently active on the platform.'}
-
-Your job:
-1. When the buyer asks for components, check which suppliers have the item in stock
-2. Contact all relevant supplier agents and compile their quotes
-3. Present a clear comparison showing: supplier name, unit price, total cost, stock availability, lead time
-4. Recommend the best option based on price and availability
-5. Ask the buyer to reply "confirm" to place the order
-
-If the buyer says "confirm", generate an order reference (e.g. ORD-XXXXXX) and confirm the order.
-
-Keep responses professional and concise. Format quotes clearly with line breaks.`;
-
   try {
-    const reply = await callClaude(systemPrompt, msg);
+    // POST to YOUR server — server calls OpenClaw and returns the reply
+    const data = await api('/api/agent/message', 'POST', {
+      message: msg,
+      agentType: 'buyer',
+      userId: currentUser.id
+    });
     removeThing(tid);
-    addMsg('bMsgs', reply, 'agent', 'Agent');
-
-    if (msg.toLowerCase().match(/need|want|order|require|looking for/)) {
-      platform.orders.push({ id: Date.now(), userId: currentUser.id, company: currentUser.company, message: msg, reply, time: new Date().toLocaleString(), status: 'Quote Received' });
-      // Log request to supplier
-      platform.requests.push({ id: Date.now(), sid: 2, customer: currentUser.company, part: msg.substring(0, 50), qty: 0, status: 'replied', time: new Date().toLocaleTimeString() });
-    }
+    addMsg('bMsgs', data.reply, 'agent', 'Agent');
   } catch(e) {
     removeThing(tid);
-    addMsg('bMsgs', 'Unable to reach the AI agent. Please check your connection and try again.', 'agent', 'Agent');
+    addMsg('bMsgs', 'Unable to reach the agent server. Please try again shortly.', 'agent', 'Agent');
   }
 
   document.getElementById('bSendBtn').disabled = false;
 }
 
-function renderOrders() {
-  const myOrders = platform.orders.filter(o => o.userId === currentUser.id);
+async function renderOrders() {
   const body = document.getElementById('bOrdersBody');
-  if (!myOrders.length) { body.innerHTML = '<div class="empty">No orders yet.</div>'; return; }
-  body.innerHTML = `<table><thead><tr><th>Request</th><th>Time</th><th>Status</th></tr></thead><tbody>` +
-    myOrders.map(o => `<tr><td style="font-weight:500;max-width:400px;">${o.message}</td><td style="font-family:'DM Mono',monospace;color:var(--text3);font-size:12px;">${o.time}</td><td><span class="tag ${o.status==='Confirmed'?'green':'gold'}">${o.status}</span></td></tr>`).join('') +
-    `</tbody></table>`;
+  try {
+    const orders = await api(`/api/orders/${currentUser.id}`);
+    if (!orders.length) { body.innerHTML = '<div class="empty">No orders yet. Use your agent to request quotes.</div>'; return; }
+    body.innerHTML = `<table><thead><tr><th>Request</th><th>Time</th><th>Status</th></tr></thead><tbody>` +
+      orders.map(o => `<tr>
+        <td style="font-weight:500;max-width:400px;">${o.message}</td>
+        <td style="font-family:'DM Mono',monospace;color:var(--text3);font-size:12px;">${new Date(o.time).toLocaleString()}</td>
+        <td><span class="tag ${o.status==='Confirmed'?'green':'gold'}">${o.status}</span></td>
+      </tr>`).join('') + `</tbody></table>`;
+  } catch(e) { body.innerHTML = '<div class="empty">Failed to load orders.</div>'; }
 }
 
-function renderBuyerSuppliers() {
-  const suppliers = platform.users.filter(u => u.type === 'supplier');
+async function renderBuyerSuppliers() {
   const el = document.getElementById('bSuppCards');
-  if (!suppliers.length) { el.innerHTML = '<div class="empty">No suppliers on platform yet.</div>'; return; }
-  el.innerHTML = suppliers.map(s => {
-    const inv = platform.inventory[s.id] || [];
-    const total = inv.reduce((sum,i)=>sum+i.stock,0);
-    return `<div class="supp-card">
-      <div class="supp-card-tag">Verified Supplier</div>
-      <h3>${s.company}</h3>
-      <p>${inv.length} parts · ${total.toLocaleString()} units total stock</p>
-      <div style="font-size:12px;color:var(--text3);margin-bottom:12px;">${inv.slice(0,3).map(i=>i.part).join(', ')}${inv.length>3?` +${inv.length-3} more`:''}</div>
-      <div class="supp-online"><div class="sdot s" style="width:5px;height:5px;"></div>Agent Online</div>
-    </div>`;
-  }).join('');
+  try {
+    const suppliers = await api('/api/suppliers');
+    if (!suppliers.length) { el.innerHTML = '<div class="empty">No suppliers on platform yet.</div>'; return; }
+    el.innerHTML = suppliers.map(s => `
+      <div class="supp-card">
+        <div class="supp-card-tag">Verified Supplier</div>
+        <h3>${s.company}</h3>
+        <p>${s.parts} parts · ${s.totalStock.toLocaleString()} units total stock</p>
+        <div style="font-size:12px;color:var(--text3);margin-bottom:12px;">${s.preview.join(', ')}${s.parts > 3 ? ` +${s.parts - 3} more` : ''}</div>
+        <div class="supp-online"><div class="sdot s" style="width:5px;height:5px;"></div>Agent Online</div>
+      </div>`).join('');
+  } catch(e) { el.innerHTML = '<div class="empty">Failed to load suppliers.</div>'; }
 }
 
 // ===== SUPPLIER PAGES =====
@@ -607,121 +557,100 @@ async function suppSend() {
   input.value = '';
   addMsg('sMsgs', msg, 'user', currentUser.company);
 
-  if (!platform.inventory[currentUser.id]) platform.inventory[currentUser.id] = [];
-
-  const invContext = JSON.stringify(platform.inventory[currentUser.id]);
-
-  const systemPrompt = `You are a supplier agent for ${currentUser.company} on the Aixinchips procurement platform.
-
-Current inventory: ${invContext}
-
-Your job is to help the supplier update their inventory. When they tell you what they have in stock, extract the information and respond with a JSON block followed by a friendly confirmation message.
-
-The JSON block should be in this exact format (always include it when inventory changes):
-<inventory_update>
-{"action":"add_or_update","part":"PART_NAME","price":0.00,"stock":0,"moq":0,"lead":"X-Y days"}
-</inventory_update>
-
-Or for out of stock:
-<inventory_update>
-{"action":"out_of_stock","part":"PART_NAME"}
-</inventory_update>
-
-Or for price update only:
-<inventory_update>
-{"action":"price_update","part":"PART_NAME","price":0.00}
-</inventory_update>
-
-Or to show inventory:
-<inventory_update>
-{"action":"show"}
-</inventory_update>
-
-Always respond in a professional, helpful tone. Confirm what you understood from their message. If they ask to show inventory, list all current items.`;
-
   const tid = addThinking('sMsgs', 'Processing');
 
   try {
-    const reply = await callClaude(systemPrompt, msg);
+    // POST to YOUR server — server calls OpenClaw
+    const data = await api('/api/agent/message', 'POST', {
+      message: msg,
+      agentType: 'supplier',
+      userId: currentUser.id
+    });
     removeThing(tid);
 
-    // Parse inventory update from reply
+    const reply = data.reply || '';
+
+    // Parse any inventory update instructions from the agent reply
     const updateMatch = reply.match(/<inventory_update>([\s\S]*?)<\/inventory_update>/);
     let cleanReply = reply.replace(/<inventory_update>[\s\S]*?<\/inventory_update>/g, '').trim();
 
     if (updateMatch) {
       try {
         const update = JSON.parse(updateMatch[1].trim());
-        const inv = platform.inventory[currentUser.id];
-
-        if (update.action === 'add_or_update') {
-          const existing = inv.findIndex(i => i.part.toLowerCase() === update.part.toLowerCase());
-          if (existing >= 0) {
-            inv[existing] = { ...inv[existing], ...update };
-            delete inv[existing].action;
+        // Persist the inventory change to the server
+        if (update.action !== 'show') {
+          await api(`/api/inventory/${currentUser.id}`, 'POST', update);
+          renderSuppInv();
+        } else {
+          // Fetch and display current inventory
+          const inv = await api(`/api/inventory/${currentUser.id}`);
+          if (!inv.length) {
+            cleanReply = 'Your inventory is currently empty. Tell me what parts you have in stock.';
           } else {
-            const newItem = { part: update.part, price: update.price, stock: update.stock, moq: update.moq || 10, lead: update.lead || '3-5 days' };
-            inv.push(newItem);
+            cleanReply = 'Your current inventory:\n\n' + inv.map(i =>
+              `${i.part}: $${i.price}/unit, ${i.stock.toLocaleString()} units${i.stock === 0 ? ' (Out of Stock)' : ''}, lead time ${i.lead}`
+            ).join('\n');
           }
-        } else if (update.action === 'out_of_stock') {
-          const idx = inv.findIndex(i => i.part.toLowerCase().includes(update.part.toLowerCase()));
-          if (idx >= 0) inv[idx].stock = 0;
-        } else if (update.action === 'price_update') {
-          const idx = inv.findIndex(i => i.part.toLowerCase().includes(update.part.toLowerCase()));
-          if (idx >= 0) inv[idx].price = update.price;
-        } else if (update.action === 'show') {
-          if (inv.length === 0) cleanReply = 'Your inventory is currently empty. Tell me what parts you have in stock and I will add them.';
-          else cleanReply = 'Your current inventory:\n\n' + inv.map(i => `${i.part}: $${i.price}/unit, ${i.stock.toLocaleString()} units${i.stock === 0 ? ' (Out of Stock)' : ''}, lead time ${i.lead}`).join('\n');
         }
-        renderSuppInv();
-      } catch(e) {
-        console.log('Parse error:', e);
-      }
+      } catch(e) { console.log('Inventory parse error:', e); }
     }
 
     addMsg('sMsgs', cleanReply || reply, 'agent', 'Agent');
   } catch(e) {
     removeThing(tid);
-    addMsg('sMsgs', 'Unable to reach AI. Please check connection.', 'agent', 'Agent');
+    addMsg('sMsgs', 'Unable to reach agent server. Please try again.', 'agent', 'Agent');
   }
 }
 
-function renderSuppInv() {
-  const inv = platform.inventory[currentUser.id] || [];
-  document.getElementById('sTotP').textContent = inv.length;
-  document.getElementById('sTotU').textContent = inv.reduce((s,i)=>s+i.stock,0).toLocaleString();
-  const myReq = platform.requests.filter(r=>r.sid===currentUser.id);
-  document.getElementById('sTotR').textContent = myReq.length;
-  const grid = document.getElementById('sInvGrid');
-  if (!inv.length) { grid.innerHTML = '<div class="empty" style="grid-column:1/-1;">No inventory yet. Go to My Agent and tell it what you have in stock.</div>'; return; }
-  grid.innerHTML = inv.map(i => `
-    <div class="inv-card">
-      <div class="inv-part">${i.part}</div>
-      <div class="inv-price">$${i.price}</div>
-      <div class="inv-detail">${i.stock.toLocaleString()} units · MOQ ${i.moq}</div>
-      <div class="inv-detail">Lead: ${i.lead}</div>
-      <div class="inv-avail ${i.stock===0?'low':i.stock<50?'low':''}">${i.stock===0?'Out of Stock':i.stock<50?'Low Stock':'In Stock'}</div>
-    </div>`).join('');
+async function renderSuppInv() {
+  try {
+    const inv = await api(`/api/inventory/${currentUser.id}`);
+    const reqs = await api(`/api/requests/${currentUser.id}`);
+
+    document.getElementById('sTotP').textContent = inv.length;
+    document.getElementById('sTotU').textContent = inv.reduce((s,i)=>s+i.stock,0).toLocaleString();
+    document.getElementById('sTotR').textContent = reqs.length;
+
+    const grid = document.getElementById('sInvGrid');
+    if (!inv.length) {
+      grid.innerHTML = '<div class="empty" style="grid-column:1/-1;">No inventory yet. Go to My Agent and tell it what you have in stock.</div>';
+      return;
+    }
+    grid.innerHTML = inv.map(i => `
+      <div class="inv-card">
+        <div class="inv-part">${i.part}</div>
+        <div class="inv-price">$${i.price}</div>
+        <div class="inv-detail">${i.stock.toLocaleString()} units · MOQ ${i.moq}</div>
+        <div class="inv-detail">Lead: ${i.lead}</div>
+        <div class="inv-avail ${i.stock===0?'low':i.stock<50?'low':''}">${i.stock===0?'Out of Stock':i.stock<50?'Low Stock':'In Stock'}</div>
+      </div>`).join('');
+  } catch(e) {
+    document.getElementById('sInvGrid').innerHTML = '<div class="empty" style="grid-column:1/-1;">Failed to load inventory.</div>';
+  }
 }
 
-function renderRequests() {
-  const myReq = platform.requests.filter(r=>r.sid===currentUser.id);
+async function renderRequests() {
   const el = document.getElementById('sReqList');
-  if (!myReq.length) { el.innerHTML = '<div class="empty">No requests yet.</div>'; return; }
-  el.innerHTML = myReq.map(r => `
-    <div class="req-card">
-      <div class="req-info"><h4>${r.customer}</h4><p>${r.part} · ${r.time}</p></div>
-      <span class="tag green">${r.status}</span>
-    </div>`).join('');
+  try {
+    const reqs = await api(`/api/requests/${currentUser.id}`);
+    if (!reqs.length) { el.innerHTML = '<div class="empty">No requests yet.</div>'; return; }
+    el.innerHTML = reqs.map(r => `
+      <div class="req-card">
+        <div class="req-info"><h4>${r.customer}</h4><p>${r.part} · ${r.time}</p></div>
+        <span class="tag green">${r.status}</span>
+      </div>`).join('');
+  } catch(e) { el.innerHTML = '<div class="empty">Failed to load requests.</div>'; }
 }
 
-function renderAnalytics() {
-  const myReq = platform.requests.filter(r=>r.sid===currentUser.id);
-  const inv = platform.inventory[currentUser.id]||[];
-  document.getElementById('anaTot').textContent = myReq.length;
-  document.getElementById('anaResp').textContent = myReq.length;
-  document.getElementById('anaOOS').textContent = inv.filter(i=>i.stock===0).length;
-  document.getElementById('anaRev').textContent = '$0';
+async function renderAnalytics() {
+  try {
+    const reqs = await api(`/api/requests/${currentUser.id}`);
+    const inv = await api(`/api/inventory/${currentUser.id}`);
+    document.getElementById('anaTot').textContent = reqs.length;
+    document.getElementById('anaResp').textContent = reqs.length;
+    document.getElementById('anaOOS').textContent = inv.filter(i=>i.stock===0).length;
+    document.getElementById('anaRev').textContent = '$0';
+  } catch(e) {}
 }
 
 // ===== HELPERS =====
